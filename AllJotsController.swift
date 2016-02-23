@@ -25,11 +25,11 @@ class AllJotsController: UITableViewController, NewJotControllerDelegate, JotInp
             self.navigationItem.rightBarButtonItem = self.editButtonItem()
          }
          
-         sectionedJots = SectionBuilder.arraysForSections(jots)
+         // sectionedJots = SectionBuilder.arraysForSections(jots)
       }
    }
    
-   var sectionedJots = [[Jot]]()
+   // var sectionedJots = [[Jot]]()
    
    override func viewDidLoad() {
       super.viewDidLoad()
@@ -125,7 +125,8 @@ class AllJotsController: UITableViewController, NewJotControllerDelegate, JotInp
    
    // NUMBER OF SECTIONS
    override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
-      return sectionedJots.count
+      // Add 1 for first row
+      return SectionBuilder.arraysForSections(jots).count + 1
    }
    
    
@@ -134,17 +135,10 @@ class AllJotsController: UITableViewController, NewJotControllerDelegate, JotInp
    
       switch section {
       case 0: return 1
-      case 1: return sectionedJots[0].count
-      case 2: return sectionedJots[1].count
-      case 3: return sectionedJots[2].count
-      case 4: return sectionedJots[3].count
-      case 5: return sectionedJots[4].count
-      case 6: return sectionedJots[5].count
-      case 7: return sectionedJots[6].count
       default: break
       }
       
-      return 0
+      return SectionBuilder.arraysForSections(jots)[section - 1].count
    }
    
    // NAME SECTIONS
@@ -183,7 +177,7 @@ class AllJotsController: UITableViewController, NewJotControllerDelegate, JotInp
          
       } else {
          
-         let jot = sectionedJots[indexPath.section - 1][indexPath.row]
+         let jot = SectionBuilder.arraysForSections(jots)[indexPath.section - 1][indexPath.row]
          
          let cell = tableView.dequeueReusableCellWithIdentifier("standard", forIndexPath: indexPath) as! JotTableViewCell
          cell.jot = jot
