@@ -32,7 +32,6 @@ class AllJotsController: UITableViewController, NewJotControllerDelegate, JotInp
       
       // Uncomment to build a test array
       buildTestArray()
-   
       
       // register JotInputCell's nib
       tableView.registerNib(UINib(nibName: "JotInputCell", bundle: nil), forCellReuseIdentifier: "JotInputCell")
@@ -69,6 +68,7 @@ class AllJotsController: UITableViewController, NewJotControllerDelegate, JotInp
       // Remove separators altogether
       tableView.separatorStyle = .None
       
+
       
    }
    
@@ -78,7 +78,7 @@ class AllJotsController: UITableViewController, NewJotControllerDelegate, JotInp
       
       let calendar = NSCalendar.currentCalendar()
       let todayComps = calendar.components([.Day], fromDate: NSDate())
-      
+
       for month in 1...2 {
          for day in 1...31 {
             let components = NSDateComponents()
@@ -121,28 +121,39 @@ class AllJotsController: UITableViewController, NewJotControllerDelegate, JotInp
    
    // NUMBER OF SECTIONS
    override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
-      return 2
+      return SectionBuilder.arraysForSections(jots).count
    }
    
    
    // NUMBER OF ROWS
    override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
       
+      let sectionsArray = SectionBuilder.arraysForSections(jots)
+   
       switch section {
       case 0: return 1
+      case 1: return sectionsArray[0].count
+      case 2: return sectionsArray[1].count
+      case 3: return sectionsArray[2].count
+      case 4: return sectionsArray[3].count
+      case 5: return sectionsArray[4].count
+      case 6: return sectionsArray[5].count
       default: break
       }
       
-      return jots.count
+      return 0
    }
    
    // NAME SECTIONS
    override func tableView(tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
       switch section {
-      case 1:
-         if !jots.isEmpty {
-            return "Today"
-         }
+      case 1: return SectionBuilder.namesForSections()[0]
+      case 2: return SectionBuilder.namesForSections()[1]
+      case 3: return SectionBuilder.namesForSections()[2]
+      case 4: return SectionBuilder.namesForSections()[3]
+      case 5: return SectionBuilder.namesForSections()[4]
+      case 6: return SectionBuilder.namesForSections()[5]
+         
       default: break
       }
       return nil
@@ -166,9 +177,9 @@ class AllJotsController: UITableViewController, NewJotControllerDelegate, JotInp
          cell.selectionStyle = UITableViewCellSelectionStyle.None
          
          
-      } else if indexPath.section >= 1 {
+      } else {
          
-         let jot = jots[indexPath.row]
+         let jot = SectionBuilder.arraysForSections(jots)[indexPath.section - 1][indexPath.row]
          
          let jotType = jot.type!
          let cell = tableView.dequeueReusableCellWithIdentifier("standard", forIndexPath: indexPath) as! JotTableViewCell
