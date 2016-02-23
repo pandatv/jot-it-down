@@ -24,8 +24,12 @@ class AllJotsController: UITableViewController, NewJotControllerDelegate, JotInp
          } else {
             self.navigationItem.rightBarButtonItem = self.editButtonItem()
          }
+         
+         sectionedJots = SectionBuilder.arraysForSections(jots)
       }
    }
+   
+   var sectionedJots = [[Jot]]()
    
    override func viewDidLoad() {
       super.viewDidLoad()
@@ -121,23 +125,22 @@ class AllJotsController: UITableViewController, NewJotControllerDelegate, JotInp
    
    // NUMBER OF SECTIONS
    override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
-      return SectionBuilder.arraysForSections(jots).count
+      return sectionedJots.count
    }
    
    
    // NUMBER OF ROWS
    override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-      
-      let sectionsArray = SectionBuilder.arraysForSections(jots)
    
       switch section {
       case 0: return 1
-      case 1: return sectionsArray[0].count
-      case 2: return sectionsArray[1].count
-      case 3: return sectionsArray[2].count
-      case 4: return sectionsArray[3].count
-      case 5: return sectionsArray[4].count
-      case 6: return sectionsArray[5].count
+      case 1: return sectionedJots[0].count
+      case 2: return sectionedJots[1].count
+      case 3: return sectionedJots[2].count
+      case 4: return sectionedJots[3].count
+      case 5: return sectionedJots[4].count
+      case 6: return sectionedJots[5].count
+      case 7: return sectionedJots[6].count
       default: break
       }
       
@@ -153,6 +156,7 @@ class AllJotsController: UITableViewController, NewJotControllerDelegate, JotInp
       case 4: return SectionBuilder.namesForSections()[3]
       case 5: return SectionBuilder.namesForSections()[4]
       case 6: return SectionBuilder.namesForSections()[5]
+      case 7: return SectionBuilder.namesForSections()[6]
          
       default: break
       }
@@ -179,11 +183,12 @@ class AllJotsController: UITableViewController, NewJotControllerDelegate, JotInp
          
       } else {
          
-         let jot = SectionBuilder.arraysForSections(jots)[indexPath.section - 1][indexPath.row]
+         let jot = sectionedJots[indexPath.section - 1][indexPath.row]
          
-         let jotType = jot.type!
          let cell = tableView.dequeueReusableCellWithIdentifier("standard", forIndexPath: indexPath) as! JotTableViewCell
          cell.jot = jot
+
+         let jotType = jot.type!
          
          switch jotType {
          case .Normal:
@@ -324,11 +329,13 @@ class AllJotsController: UITableViewController, NewJotControllerDelegate, JotInp
    }
    
    
-   // Override to support editing the table view.
+   // Override to support editing the table view
    override func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {
       if editingStyle == .Delete {
-         jots.removeAtIndex(indexPath.row)
+         let cell = tableView.cellForRowAtIndexPath(indexPath) as! JotTableViewCell
+         jots.removeAtIndex(jots.indexOf(cell.jot!)!)
          tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: .Fade)
+         
          modifyToolbarsOnEditing(editing)
       } else if editingStyle == .Insert {
          // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
