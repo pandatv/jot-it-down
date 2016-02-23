@@ -77,6 +77,7 @@ class SectionBuilder {
                 if todayJots == nil {
                     todayJots = [Jot]()
                 }
+                todayJots?.append(Jot(string: SectionNames.Today, title: nil))
                 todayJots?.append(jot)
                 continue
             }

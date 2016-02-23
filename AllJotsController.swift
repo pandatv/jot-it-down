@@ -148,7 +148,8 @@ class AllJotsController: UITableViewController, NewJotControllerDelegate, JotInp
          default: break
       }
       
-      return SectionBuilder.namesForSections()[section - 1]
+      // TODO: Think better! 
+      return SectionBuilder.arraysForSections(jots)[section - 1][0].body
    }
    
    //MARK: - Dispatch cells
