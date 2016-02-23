@@ -121,31 +121,41 @@ class AllJotsController: UITableViewController, NewJotControllerDelegate, JotInp
    
    // NUMBER OF SECTIONS
    override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
-      return 2
+      if !editing {
+         return SectionBuilder.arraysForSections(jots).count + 1
+      } else {
+         return 2
+      }
    }
    
    
    // NUMBER OF ROWS
    override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-      
+   
       switch section {
       case 0: return 1
       default: break
       }
       
-      return jots.count
+      if !editing {
+         return SectionBuilder.arraysForSections(jots)[section - 1].section.count
+      } else {
+         return jots.count
+      }
    }
    
-   // NAME SECTIONS
    override func tableView(tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
       switch section {
-      case 1:
-         if !jots.isEmpty {
-            return "Today"
-         }
+      case 0: return nil
       default: break
       }
-      return nil
+      
+      if !editing {
+               return SectionBuilder.arraysForSections(jots)[section - 1].name
+      } else {
+         return nil 
+      }
+
    }
    
    //MARK: - Dispatch cells
@@ -166,13 +176,22 @@ class AllJotsController: UITableViewController, NewJotControllerDelegate, JotInp
          cell.selectionStyle = UITableViewCellSelectionStyle.None
          
          
-      } else if indexPath.section >= 1 {
+      } else {
          
-         let jot = jots[indexPath.row]
+         var jot: Jot! 
          
-         let jotType = jot.type!
+         if !editing {
+            jot = SectionBuilder.arraysForSections(jots)[indexPath.section - 1].section[indexPath.row]
+         } else {
+            jot = jots[indexPath.row]
+         }
+         
+
+         
          let cell = tableView.dequeueReusableCellWithIdentifier("standard", forIndexPath: indexPath) as! JotTableViewCell
          cell.jot = jot
+         
+         let jotType = jot.type!
          
          switch jotType {
          case .Normal:
@@ -188,6 +207,7 @@ class AllJotsController: UITableViewController, NewJotControllerDelegate, JotInp
       return cellToReturn!
       
    }
+   
    
    override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
       
@@ -327,6 +347,9 @@ class AllJotsController: UITableViewController, NewJotControllerDelegate, JotInp
    // Toggles editing mode
    override func setEditing(editing: Bool, animated: Bool) {
       super.setEditing(editing, animated: animated)
+      
+      tableView.reloadData()
+      
       modifyToolbarsOnEditing(editing)
       toggleInputRowOnEditing(editing)
    }

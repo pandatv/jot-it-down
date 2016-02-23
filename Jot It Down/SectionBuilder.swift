@@ -52,12 +52,13 @@ class SectionBuilder {
         
     }
     
+    // Do we still need it?
     class func namesForSections() -> [String] {
         return [SectionNames.Today, SectionNames.ThisWeek, SectionNames.ThisMonth, SectionNames.MonthAgo, SectionNames.TwoMonthsAgo, SectionNames.ThreeMonthsAgo, SectionNames.Earlier]
     }
     
     // TODO: Use tuples to generate relevant section names
-    class func arraysForSections(jots: [Jot]) -> [(name: String, content: [Jot])] {
+    class func arraysForSections(jots: [Jot]) -> [(name: String, section: [Jot])] {
         
         let now = NSDate()
         let calendar = NSCalendar.currentCalendar()
@@ -86,8 +87,6 @@ class SectionBuilder {
                 continue
             }
             
-            
-            
             if calendar.compareDate(jot.createdAt, toDate: now, toUnitGranularity: .WeekOfYear) == NSComparisonResult.OrderedSame {
                 if thisWeekJots == nil {
                     thisWeekJots = [Jot]()
@@ -96,8 +95,7 @@ class SectionBuilder {
                 thisWeekJots?.append(jot)
                 continue
             }
-            
-            
+    
             if calendar.compareDate(jot.createdAt, toDate: now, toUnitGranularity: .Month) == NSComparisonResult.OrderedSame {
                 if thisMonthJots == nil {
                     thisMonthJots = [Jot]()
@@ -106,7 +104,6 @@ class SectionBuilder {
                 thisMonthJots?.append(jot)
                 continue
             }
-            
             
             if calendar.compareDate(jot.createdAt, toDate: SectionNames.calculatePreviousMonth(1)!, toUnitGranularity: .Month) == NSComparisonResult.OrderedSame {
                 if oneMonthAgoJots == nil {
@@ -143,15 +140,13 @@ class SectionBuilder {
                 earlierJots?.append(jot)
                 continue
             }
-            
-
         }
         
         let allSections: [[Jot]?] = [todayJots, thisWeekJots, thisMonthJots, oneMonthAgoJots, twoMonthsAgoJots, threeMonthsAgoJots, earlierJots]
         
         
         var sectionsToReturn = [[Jot]]()
-        var tuplesToReturn = [(name: String, content: [Jot])]()
+        var tuplesToReturn = [(name: String, section: [Jot])]()
         
         for section in allSections {
             if section != nil {
@@ -159,7 +154,6 @@ class SectionBuilder {
             }
         }
         
-        // ????? 
         for name in names {
             tuplesToReturn.append((name, sectionsToReturn[names.indexOf(name)!]))
         }
