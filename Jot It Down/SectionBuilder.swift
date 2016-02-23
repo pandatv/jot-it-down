@@ -12,8 +12,8 @@ class SectionBuilder {
 
     private struct SectionNames {
         static let Today = "Today"
-        static let ThisWeek = "This Week"
-        static let ThisMonth = "This Month"
+        static let ThisWeek = "Earlier This Week"
+        static let ThisMonth = "Earlier This Month"
         
         static var MonthAgo: String {
             return previousMonthsNames()[0]
@@ -32,7 +32,7 @@ class SectionBuilder {
         static func calculatePreviousMonth(monthsBack: Int) -> NSDate? {
             let now = NSDate()
             let calendar = NSCalendar.currentCalendar()
-            // calendar.firstWeekday = 2
+            calendar.firstWeekday = 2
             let todayComps = calendar.components([.Month, .Year], fromDate: now)
             todayComps.month -= monthsBack
             return calendar.dateFromComponents(todayComps)
@@ -60,6 +60,7 @@ class SectionBuilder {
         
         let now = NSDate()
         let calendar = NSCalendar.currentCalendar()
+        calendar.firstWeekday = 2
         
         var todayJots: [Jot]?
         var thisWeekJots: [Jot]?

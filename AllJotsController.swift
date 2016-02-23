@@ -144,17 +144,11 @@ class AllJotsController: UITableViewController, NewJotControllerDelegate, JotInp
    // NAME SECTIONS
    override func tableView(tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
       switch section {
-      case 1: return SectionBuilder.namesForSections()[0]
-      case 2: return SectionBuilder.namesForSections()[1]
-      case 3: return SectionBuilder.namesForSections()[2]
-      case 4: return SectionBuilder.namesForSections()[3]
-      case 5: return SectionBuilder.namesForSections()[4]
-      case 6: return SectionBuilder.namesForSections()[5]
-      case 7: return SectionBuilder.namesForSections()[6]
-         
-      default: break
+         case 0: return nil
+         default: break
       }
-      return nil
+      
+      return SectionBuilder.namesForSections()[section - 1]
    }
    
    //MARK: - Dispatch cells
@@ -328,7 +322,7 @@ class AllJotsController: UITableViewController, NewJotControllerDelegate, JotInp
       if editingStyle == .Delete {
          let cell = tableView.cellForRowAtIndexPath(indexPath) as! JotTableViewCell
          jots.removeAtIndex(jots.indexOf(cell.jot!)!)
-         tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: .Fade)
+         tableView.reloadData()
          
          modifyToolbarsOnEditing(editing)
       } else if editingStyle == .Insert {
@@ -361,8 +355,6 @@ class AllJotsController: UITableViewController, NewJotControllerDelegate, JotInp
          return
       }
       cell.hidden = editing
-      tableView.beginUpdates()
-      tableView.endUpdates()
    }
    
    override func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
@@ -547,8 +539,8 @@ class AllJotsController: UITableViewController, NewJotControllerDelegate, JotInp
       }
       
       jots.insert(jot, atIndex: 0)
-      let indexPath = NSIndexPath(forRow: 0, inSection: 1)
-      tableView.insertRowsAtIndexPaths([indexPath], withRowAnimation: .Automatic)
+      
+      tableView.reloadData()
    }
    
    func dismissKeyboard(sender: AnyObject) {
