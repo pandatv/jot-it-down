@@ -56,7 +56,8 @@ class SectionBuilder {
         return [SectionNames.Today, SectionNames.ThisWeek, SectionNames.ThisMonth, SectionNames.MonthAgo, SectionNames.TwoMonthsAgo, SectionNames.ThreeMonthsAgo, SectionNames.Earlier]
     }
     
-    class func arraysForSections(jots: [Jot]) -> [[Jot]] {
+    // TODO: Use tuples to generate relevant section names
+    class func arraysForSections(jots: [Jot]) -> [(name: String, content: [Jot])] {
         
         let now = NSDate()
         let calendar = NSCalendar.currentCalendar()
@@ -70,14 +71,17 @@ class SectionBuilder {
         var threeMonthsAgoJots: [Jot]?
         var earlierJots: [Jot]?
         
+        var names = [String]()
+        
         // That's the way!
         for jot in jots {
             
             if calendar.compareDate(jot.createdAt, toDate: now, toUnitGranularity: .Day) == NSComparisonResult.OrderedSame {
                 if todayJots == nil {
                     todayJots = [Jot]()
+                    names.append(SectionNames.Today)
                 }
-                todayJots?.append(Jot(string: SectionNames.Today, title: nil))
+                
                 todayJots?.append(jot)
                 continue
             }
@@ -87,6 +91,7 @@ class SectionBuilder {
             if calendar.compareDate(jot.createdAt, toDate: now, toUnitGranularity: .WeekOfYear) == NSComparisonResult.OrderedSame {
                 if thisWeekJots == nil {
                     thisWeekJots = [Jot]()
+                    names.append(SectionNames.ThisWeek)
                 }
                 thisWeekJots?.append(jot)
                 continue
@@ -96,6 +101,7 @@ class SectionBuilder {
             if calendar.compareDate(jot.createdAt, toDate: now, toUnitGranularity: .Month) == NSComparisonResult.OrderedSame {
                 if thisMonthJots == nil {
                     thisMonthJots = [Jot]()
+                    names.append(SectionNames.ThisMonth)
                 }
                 thisMonthJots?.append(jot)
                 continue
@@ -105,6 +111,7 @@ class SectionBuilder {
             if calendar.compareDate(jot.createdAt, toDate: SectionNames.calculatePreviousMonth(1)!, toUnitGranularity: .Month) == NSComparisonResult.OrderedSame {
                 if oneMonthAgoJots == nil {
                     oneMonthAgoJots = [Jot]()
+                    names.append(SectionNames.MonthAgo)
                 }
                 oneMonthAgoJots?.append(jot)
                 continue
@@ -113,6 +120,7 @@ class SectionBuilder {
             if calendar.compareDate(jot.createdAt, toDate: SectionNames.calculatePreviousMonth(2)!, toUnitGranularity: .Month) == NSComparisonResult.OrderedSame {
                 if twoMonthsAgoJots == nil {
                     twoMonthsAgoJots = [Jot]()
+                    names.append(SectionNames.TwoMonthsAgo)
                 }
                 twoMonthsAgoJots?.append(jot)
                 continue
@@ -121,6 +129,7 @@ class SectionBuilder {
             if calendar.compareDate(jot.createdAt, toDate: SectionNames.calculatePreviousMonth(3)!, toUnitGranularity: .Month) == NSComparisonResult.OrderedSame {
                 if threeMonthsAgoJots == nil {
                     threeMonthsAgoJots = [Jot]()
+                    names.append(SectionNames.ThreeMonthsAgo)
                 }
                 threeMonthsAgoJots?.append(jot)
                 continue
@@ -129,6 +138,7 @@ class SectionBuilder {
             if calendar.compareDate(jot.createdAt, toDate: SectionNames.calculatePreviousMonth(3)!, toUnitGranularity: .Month) == NSComparisonResult.OrderedAscending {
                 if earlierJots == nil {
                     earlierJots = [Jot]()
+                    names.append(SectionNames.Earlier)
                 }
                 earlierJots?.append(jot)
                 continue
@@ -141,6 +151,7 @@ class SectionBuilder {
         
         
         var sectionsToReturn = [[Jot]]()
+        var tuplesToReturn = [(name: String, content: [Jot])]()
         
         for section in allSections {
             if section != nil {
@@ -148,9 +159,12 @@ class SectionBuilder {
             }
         }
         
-
+        // ????? 
+        for name in names {
+            tuplesToReturn.append((name, sectionsToReturn[names.indexOf(name)!]))
+        }
         
-        return sectionsToReturn
+        return tuplesToReturn
     }
     
 }

@@ -138,7 +138,7 @@ class AllJotsController: UITableViewController, NewJotControllerDelegate, JotInp
       default: break
       }
       
-      return SectionBuilder.arraysForSections(jots)[section - 1].count
+      return SectionBuilder.arraysForSections(jots)[section - 1].content.count
    }
    
    // NAME SECTIONS
@@ -148,8 +148,8 @@ class AllJotsController: UITableViewController, NewJotControllerDelegate, JotInp
          default: break
       }
       
-      // TODO: Think better! 
-      return SectionBuilder.arraysForSections(jots)[section - 1][0].body
+      // TODO: Think better!
+      return SectionBuilder.arraysForSections(jots)[section - 1].name
    }
    
    //MARK: - Dispatch cells
@@ -172,7 +172,7 @@ class AllJotsController: UITableViewController, NewJotControllerDelegate, JotInp
          
       } else {
          
-         let jot = SectionBuilder.arraysForSections(jots)[indexPath.section - 1][indexPath.row]
+         let jot = SectionBuilder.arraysForSections(jots)[indexPath.section - 1].content[indexPath.row]
          
          let cell = tableView.dequeueReusableCellWithIdentifier("standard", forIndexPath: indexPath) as! JotTableViewCell
          cell.jot = jot
