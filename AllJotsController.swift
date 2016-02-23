@@ -24,18 +24,15 @@ class AllJotsController: UITableViewController, NewJotControllerDelegate, JotInp
          } else {
             self.navigationItem.rightBarButtonItem = self.editButtonItem()
          }
-         
-         // sectionedJots = SectionBuilder.arraysForSections(jots)
       }
    }
-   
-   // var sectionedJots = [[Jot]]()
    
    override func viewDidLoad() {
       super.viewDidLoad()
       
       // Uncomment to build a test array
       buildTestArray()
+   
       
       // register JotInputCell's nib
       tableView.registerNib(UINib(nibName: "JotInputCell", bundle: nil), forCellReuseIdentifier: "JotInputCell")
@@ -72,7 +69,6 @@ class AllJotsController: UITableViewController, NewJotControllerDelegate, JotInp
       // Remove separators altogether
       tableView.separatorStyle = .None
       
-
       
    }
    
@@ -82,7 +78,7 @@ class AllJotsController: UITableViewController, NewJotControllerDelegate, JotInp
       
       let calendar = NSCalendar.currentCalendar()
       let todayComps = calendar.components([.Day], fromDate: NSDate())
-
+      
       for month in 1...2 {
          for day in 1...31 {
             let components = NSDateComponents()
@@ -125,31 +121,31 @@ class AllJotsController: UITableViewController, NewJotControllerDelegate, JotInp
    
    // NUMBER OF SECTIONS
    override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
-      // Add 1 for first row
-      return SectionBuilder.arraysForSections(jots).count + 1
+      return 2
    }
    
    
    // NUMBER OF ROWS
    override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-   
+      
       switch section {
       case 0: return 1
       default: break
       }
       
-      return SectionBuilder.arraysForSections(jots)[section - 1].content.count
+      return jots.count
    }
    
    // NAME SECTIONS
    override func tableView(tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
       switch section {
-         case 0: return nil
-         default: break
+      case 1:
+         if !jots.isEmpty {
+            return "Today"
+         }
+      default: break
       }
-      
-      // TODO: Think better!
-      return SectionBuilder.arraysForSections(jots)[section - 1].name
+      return nil
    }
    
    //MARK: - Dispatch cells
@@ -170,14 +166,13 @@ class AllJotsController: UITableViewController, NewJotControllerDelegate, JotInp
          cell.selectionStyle = UITableViewCellSelectionStyle.None
          
          
-      } else {
+      } else if indexPath.section >= 1 {
          
-         let jot = SectionBuilder.arraysForSections(jots)[indexPath.section - 1].content[indexPath.row]
+         let jot = jots[indexPath.row]
          
+         let jotType = jot.type!
          let cell = tableView.dequeueReusableCellWithIdentifier("standard", forIndexPath: indexPath) as! JotTableViewCell
          cell.jot = jot
-
-         let jotType = jot.type!
          
          switch jotType {
          case .Normal:
@@ -318,13 +313,11 @@ class AllJotsController: UITableViewController, NewJotControllerDelegate, JotInp
    }
    
    
-   // Override to support editing the table view
+   // Override to support editing the table view.
    override func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {
       if editingStyle == .Delete {
-         let cell = tableView.cellForRowAtIndexPath(indexPath) as! JotTableViewCell
-         jots.removeAtIndex(jots.indexOf(cell.jot!)!)
-         tableView.reloadData()
-         
+         jots.removeAtIndex(indexPath.row)
+         tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: .Fade)
          modifyToolbarsOnEditing(editing)
       } else if editingStyle == .Insert {
          // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
@@ -356,6 +349,8 @@ class AllJotsController: UITableViewController, NewJotControllerDelegate, JotInp
          return
       }
       cell.hidden = editing
+      tableView.beginUpdates()
+      tableView.endUpdates()
    }
    
    override func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
@@ -540,8 +535,8 @@ class AllJotsController: UITableViewController, NewJotControllerDelegate, JotInp
       }
       
       jots.insert(jot, atIndex: 0)
-      
-      tableView.reloadData()
+      let indexPath = NSIndexPath(forRow: 0, inSection: 1)
+      tableView.insertRowsAtIndexPaths([indexPath], withRowAnimation: .Automatic)
    }
    
    func dismissKeyboard(sender: AnyObject) {
