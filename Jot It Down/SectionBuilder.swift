@@ -12,19 +12,21 @@ class SectionBuilder {
 
     private struct SectionNames {
         static let Today = "Today"
-        static let ThisWeek = "Earlier This Week"
-        static let ThisMonth = "Earlier This Month"
-        
-        static var MonthAgo: String {
+        static let ThisWeek = "This Week"
+        static var ThisMonth: String {
             return previousMonthsNames()[0]
         }
         
-        static var TwoMonthsAgo: String {
+        static var MonthAgo: String {
             return previousMonthsNames()[1]
         }
         
-        static var ThreeMonthsAgo: String {
+        static var TwoMonthsAgo: String {
             return previousMonthsNames()[2]
+        }
+        
+        static var ThreeMonthsAgo: String {
+            return previousMonthsNames()[3]
         }
         
         static let Earlier = "Earlier"
@@ -41,11 +43,12 @@ class SectionBuilder {
         private static func previousMonthsNames() -> [String] {
             let formatter = NSDateFormatter()
             formatter.dateFormat = "MMMM"
+            let currentMonthString = formatter.stringFromDate(calculatePreviousMonth(0)!)
             let monthAgoString = formatter.stringFromDate(calculatePreviousMonth(1)!)
             let twoMonthsAgoString = formatter.stringFromDate(calculatePreviousMonth(2)!)
             let threeMonthsAgoString = formatter.stringFromDate(calculatePreviousMonth(3)!)
             
-            let returnArray = [monthAgoString, twoMonthsAgoString, threeMonthsAgoString]
+            let returnArray = [currentMonthString, monthAgoString, twoMonthsAgoString, threeMonthsAgoString]
             
             return returnArray
         }
@@ -142,6 +145,7 @@ class SectionBuilder {
             }
         }
         
+        // First array is a padding
         let allSections: [[Jot]?] = [todayJots, thisWeekJots, thisMonthJots, oneMonthAgoJots, twoMonthsAgoJots, threeMonthsAgoJots, earlierJots]
         
         
@@ -153,6 +157,7 @@ class SectionBuilder {
                 sectionsToReturn.append(section!)
             }
         }
+        
         
         for name in names {
             tuplesToReturn.append((name, sectionsToReturn[names.indexOf(name)!]))

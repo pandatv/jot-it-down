@@ -65,7 +65,7 @@ class JotTableViewCell: UITableViewCell {
         
         let dateFormatter = NSDateFormatter()
         dateFormatter.locale = NSLocale.currentLocale()
-        dateFormatter.dateFormat = "EEEE, MMMM d" // "HH:mm:ss"
+        dateFormatter.dateFormat = "EEEE, MMM d" // "HH:mm:ss"
         
 
         createdAtLabel.text = dateFormatter.stringFromDate(jot.createdAt)

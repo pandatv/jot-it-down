@@ -18,8 +18,16 @@
                     <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" scrollEnabled="NO" text="Text View " textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="wDg-6G-RwU">
                         <rect key="frame" x="46" y="8" width="327" height="96"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="50" id="Ltu-JL-DmF"/>
+                        </constraints>
                         <fontDescription key="fontDescription" type="system" pointSize="20"/>
                         <textInputTraits key="textInputTraits" keyboardType="twitter"/>
+                        <variation key="default">
+                            <mask key="constraints">
+                                <exclude reference="Ltu-JL-DmF"/>
+                            </mask>
+                        </variation>
                     </textView>
                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="RwT-la-Xh9">
                         <rect key="frame" x="8" y="8" width="30" height="96"/>

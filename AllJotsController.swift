@@ -254,8 +254,276 @@ class AllJotsController: UITableViewController, NewJotControllerDelegate, JotInp
       }
    }
    
+   
+   // Prohibit editing for first row
+   override func tableView(tableView: UITableView, canEditRowAtIndexPath indexPath: NSIndexPath) -> Bool {
+      if indexPath.section == 0 {
+         return false
+      } else {
+         return true
+      }
+   }
+   
+   // Disable swipe actions
+   override func tableView(tableView: UITableView, editingStyleForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCellEditingStyle {
+      if editing {
+         return UITableViewCellEditingStyle.Delete
+      } else {
+         return UITableViewCellEditingStyle.None
+      }
+   }
+   
+   
+   // Override to support editing the table view.
+   override func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {
+      
+      if editingStyle == .Delete {
+         jots.removeAtIndex(indexPath.row)
+         tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: .Fade)
+         modifyToolbarsOnEditing(editing)
+      } else if editingStyle == .Insert {
+         // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
+      }
+   }
+   
+   // Toggles editing mode
+   override func setEditing(editing: Bool, animated: Bool) {
+      super.setEditing(editing, animated: animated)
+      
+      
+      modifyToolbarsOnEditing(editing)
+      toggleInputRowOnEditing(editing)
+      
+     // Experiment with animations
+      UIView.transitionWithView(tableView,
+         duration:0.2,
+         options:.TransitionCrossDissolve,
+         animations:
+         { () -> Void in
+            self.tableView.reloadData()
+         },
+         completion: nil);
+   }
+   
+   // Make interface changes
+   func modifyToolbarsOnEditing(editing: Bool) {
+      
+      // Enter editing
+      if editing {
+         self.toolbarItems = editToolbar()
+         
+         // Exit editing
+      } else {
+         self.toolbarItems = normalToolbar()
+      }
+   }
+   
+   func toggleInputRowOnEditing(editing: Bool) {
+      guard let cell = tableView.cellForRowAtIndexPath(NSIndexPath(forRow: 0, inSection: 0)) as? JotInputCell else {
+         return
+      }
+      cell.hidden = editing
+      cell.tickboxSwitch.hidden = editing
+   }
+   
+   override func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
+      switch indexPath.section {
+      case 0: if editing { return 0 }
+      default: break
+      }
+      return UITableViewAutomaticDimension
+   }
+   
+   
+   // TODO: Re-write toolbar creation for nicer code, consider compose button in normal state
+   
+   // return toolbar items for normal state
+   func normalToolbar() -> [UIBarButtonItem] {
+      
+      let flexSpace = UIBarButtonItem(barButtonSystemItem: .FlexibleSpace, target: self, action: nil)
+      // let composeJot = UIBarButtonItem(barButtonSystemItem: .Compose, target: self, action: "composeJot")
+      let jotCount = UIBarButtonItem(title: "\(jots.count) Jots", style: .Plain, target: self, action: nil)
+      
+      return [flexSpace, jotCount, flexSpace]
+      
+   }
+   
+   // return toolbar items for editing state
+   func editToolbar() -> [UIBarButtonItem] {
+      
+      // Create placeholders for "Merge" and "Delete" buttons that will appear on multiple row selection
+      return [UIBarButtonItem(title: nil, style: .Plain, target: self, action: "mergeAndDelete"),
+         UIBarButtonItem(barButtonSystemItem: .FlexibleSpace, target: self, action: nil),
+         UIBarButtonItem(title: nil, style: .Plain, target: self, action: "deleteSelectedRows")]
+   }
+   
+   func mergeAndDelete() {
+      mergeSelected(andDelete: true)
+   }
+   
+   // Consider adding to UI
+   func mergeAndLeaveinPlace() {
+      mergeSelected(andDelete: false)
+   }
+   
+   // Merge selected rows and insert above the uppermost selected
+   func mergeSelected(andDelete delete: Bool) {
+      if let selectedRows = tableView.indexPathsForSelectedRows {
+         let sortedRows = selectedRows.sort({$0.row < $1.row})
+         var mergedJotString = ""
+         for indexPath in sortedRows {
+            mergedJotString += "\n"
+            mergedJotString += jots[indexPath.row].body
+         }
+         // Instantiate new jot with a merged string
+         let newJot = Jot(string: mergedJotString, title: nil)
+         // Set it's color to the uppermost selected jot's color
+         newJot.tagColor = jots[sortedRows.first!.row].tagColor
+         
+         let index = sortedRows[0]
+         
+         if delete {
+            deleteSelectedRows()
+         }
+         
+         jots.insert(newJot, atIndex: index.row)
+         tableView.insertRowsAtIndexPaths([sortedRows.first!], withRowAnimation: .Bottom)
+      }
+   }
+   
+   // Who knew it would be such a PAIN IN THE ASS because we can't predictably iterate over Swift Array while it updates
+   func deleteSelectedRows() {
+      
+      // Just making sure we selected something
+      guard let selectedPaths = tableView.indexPathsForSelectedRows else {
+         return
+      }
+      
+      //  create NSIndexSet from [NSIndexPath]
+      let indexSet = NSMutableIndexSet()
+      for path in selectedPaths {
+         indexSet.addIndex(path.row)
+      }
+      
+      // cast Swift Array to NSMutableArray
+      let mutableJots = (jots as NSArray).mutableCopy() as! NSMutableArray
+      // Do NSMagic to remove several objects at once, not one by one
+      mutableJots.removeObjectsAtIndexes(indexSet)
+      // make NSArray from NSMutableArray
+      let immutableJots = NSArray(array: mutableJots)
+      // Replace entire model array by casting NSArray back to Swift Array
+      jots = immutableJots as! Array
+      
+      tableView.deleteRowsAtIndexPaths(selectedPaths, withRowAnimation: .Bottom)
+      
+   }
+   
+   // Override to support rearranging the table view.
+   override func tableView(tableView: UITableView, moveRowAtIndexPath fromIndexPath: NSIndexPath, toIndexPath: NSIndexPath) {
+      
+      let jotToBeMoved = jots[fromIndexPath.row]
+      jots.removeAtIndex(fromIndexPath.row)
+      
+      let destinationJot = jots[toIndexPath.row]
+      jotToBeMoved.createdAt = destinationJot.createdAt
+      
+      jots.insert(jotToBeMoved, atIndex: toIndexPath.row)
+      
+   }
+   
+   // MARK: NewJotController delegate methods
+   
+   func newJotController(contoller: NewJotController, didFinishAddingJot jot: Jot) {
+      jots.insert(jot, atIndex: 0)
+      // refresh table
+      tableView.reloadData()
+   }
+   
+   // MARK: JotInputCell delegate methods
+   
+   func jotInputCelldidUpdateTextView(cell: JotInputCell) {
+      tableView.beginUpdates()
+      tableView.endUpdates()
+   }
+   
+   
+   // Update navigation bar and handle placeholder
+   func jotInputCellIsActivated(cell: JotInputCell) {
+      self.navigationItem.rightBarButtonItem = nil // UIBarButtonItem(title: "Done", style: .Done, target: self, action: "jotAddedFromInputCell")
+      self.navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Cancel", style: .Plain, target: self, action: "dismissKeyboard:")
+      
+      if cell.textView.text == cell.placeholder {
+         cell.textView.textColor = UIColor.blackColor()
+         cell.textView.text = ""
+      }
+      
+      cell.tickboxSwitch.enabled = true
+   }
+   
+   //NB: model update is handled from AJC, not JIC
+   
+   
+   func jotAddedFromInputCell(cell: JotInputCell) {
+      
+      //TODO: Check for whitespace only, not absence of alphanumeric. Not good for Emojis
+      // Check if there is anything except whitespace
+      let alphanum = NSCharacterSet.alphanumericCharacterSet()
+      
+      guard let _ = cell.textView.text.rangeOfCharacterFromSet(alphanum) else {
+         dismissKeyboard(self)
+         return
+      }
+      
+      addJot(cell)
+      cell.endEditing(true)
+      
+      cell.makePlaceholder()
+      
+      // Disable "Cancel" button
+      self.navigationItem.leftBarButtonItem = nil
+      
+      tableView.reloadData()
+      
+   }
+   
+   func addJot(cell: JotInputCell) {
+      let jot = Jot(string: cell.textView.text, title: nil)
+      jot.tagColor = cell.colorSelector
+      
+      if cell.tickboxSwitch.on {
+         jot.type = .Checkmark
+         cell.tickboxSwitch.setOn(false, animated: true)
+      }
+            
+      jots.insert(jot, atIndex: 0)
+
+   }
+   
+   func dismissKeyboard(sender: AnyObject) {
+      if let cell = tableView.cellForRowAtIndexPath(NSIndexPath(forRow: 0, inSection: 0)) as? JotInputCell
+      {
+         self.navigationItem.leftBarButtonItem = nil
+         self.navigationItem.rightBarButtonItem = editButtonItem()
+         
+         cell.endEditing(true)
+         
+         if sender is UIBarButtonItem {
+            cell.makePlaceholder()
+         }
+         
+         cell.tickboxSwitch.setOn(false, animated: true)
+         cell.tickboxSwitch.enabled = false
+         
+         tableView.beginUpdates()
+         tableView.endUpdates()
+      }
+      
+   }
+   
+   /* // TO BE DEPRECATED
    // Custom action for row slide
    override func tableView(tableView: UITableView, editActionsForRowAtIndexPath indexPath: NSIndexPath) -> [UITableViewRowAction]? {
+      
       
       let delete = UITableViewRowAction(style: .Default, title: "⨯") { (action, index) -> Void in
          self.tableView(self.tableView, commitEditingStyle: .Delete, forRowAtIndexPath: index)
@@ -320,267 +588,5 @@ class AllJotsController: UITableViewController, NewJotControllerDelegate, JotInp
    func setTagToNone(jot: Jot) {
       jot.tagColor = .None
    }
-   
-   
-   
-   // Prohibit editing for first row
-   override func tableView(tableView: UITableView, canEditRowAtIndexPath indexPath: NSIndexPath) -> Bool {
-      if indexPath.section == 0 {
-         return false
-      } else {
-         return true
-      }
-   }
-   
-   
-   // Override to support editing the table view.
-   override func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {
-      if editingStyle == .Delete {
-         jots.removeAtIndex(indexPath.row)
-         tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: .Fade)
-         modifyToolbarsOnEditing(editing)
-      } else if editingStyle == .Insert {
-         // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-      }
-   }
-   
-   // Toggles editing mode
-   override func setEditing(editing: Bool, animated: Bool) {
-      super.setEditing(editing, animated: animated)
-      
-      tableView.reloadData()
-      
-      modifyToolbarsOnEditing(editing)
-      toggleInputRowOnEditing(editing)
-   }
-   
-   // Make interface changes
-   func modifyToolbarsOnEditing(editing: Bool) {
-      
-      // Enter editing
-      if editing {
-         self.toolbarItems = editToolbar()
-         
-         // Exit editing
-      } else {
-         self.toolbarItems = normalToolbar()
-      }
-   }
-   
-   func toggleInputRowOnEditing(editing: Bool) {
-      guard let cell = tableView.cellForRowAtIndexPath(NSIndexPath(forRow: 0, inSection: 0)) as? JotInputCell else {
-         return
-      }
-      cell.hidden = editing
-      tableView.beginUpdates()
-      tableView.endUpdates()
-   }
-   
-   override func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
-      switch indexPath.section {
-      case 0: if editing { return 0 }
-      default: break
-      }
-      return UITableViewAutomaticDimension
-   }
-   
-   
-   // TODO: Re-write toolbar creation for nicer code, consider compose button in normal state
-   
-   // return toolbar items for normal state
-   func normalToolbar() -> [UIBarButtonItem] {
-      
-      let flexSpace = UIBarButtonItem(barButtonSystemItem: .FlexibleSpace, target: self, action: nil)
-      // let composeJot = UIBarButtonItem(barButtonSystemItem: .Compose, target: self, action: "composeJot")
-      let jotCount = UIBarButtonItem(title: "\(jots.count) Jots", style: .Plain, target: self, action: nil)
-      
-      return [flexSpace, jotCount, flexSpace]
-      
-   }
-   
-   // return toolbar items for editing state
-   func editToolbar() -> [UIBarButtonItem] {
-      
-      // Create placeholders for "Merge" and "Delete" buttons that will appear on multiple row selection
-      return [UIBarButtonItem(title: nil, style: .Plain, target: self, action: "mergeAndDelete"),
-         UIBarButtonItem(barButtonSystemItem: .FlexibleSpace, target: self, action: nil),
-         UIBarButtonItem(title: nil, style: .Plain, target: self, action: "deleteSelectedRows")]
-   }
-   
-   func mergeAndDelete() {
-      mergeSelected(andDelete: true)
-   }
-   
-   // Consider adding to UI
-   func mergeAndLeaveinPlace() {
-      mergeSelected(andDelete: false)
-   }
-   
-   // Merge selected rows and insert above the uppermost selected
-   func mergeSelected(andDelete delete: Bool) {
-      if let selectedRows = tableView.indexPathsForSelectedRows {
-         let sortedRows = selectedRows.sort({$0.row < $1.row})
-         var mergedJotString = ""
-         for indexPath in sortedRows {
-            mergedJotString += "\n"
-            mergedJotString += jots[indexPath.row].body
-         }
-         // Instantiate new jot with a merged string
-         let newJot = Jot(string: mergedJotString, title: nil)
-         // Set it's color to the uppermost selected jot's color
-         newJot.tagColor = jots[sortedRows.first!.row].tagColor
-         
-         let index = sortedRows[0]
-         
-         if delete {
-            deleteSelectedRows()
-         }
-         
-         jots.insert(newJot, atIndex: index.row)
-         tableView.reloadData()
-      }
-   }
-   
-   // Who knew it would be such a PAIN IN THE ASS because we can't predictably iterate over Swift Array while it updates
-   func deleteSelectedRows() {
-      
-      // Just making sure we selected something
-      guard let selectedPaths = tableView.indexPathsForSelectedRows else {
-         return
-      }
-      
-      //  create NSIndexSet from [NSIndexPath]
-      let indexSet = NSMutableIndexSet()
-      for path in selectedPaths {
-         indexSet.addIndex(path.row)
-      }
-      
-      // cast Swift Array to NSMutableArray
-      let mutableJots = (jots as NSArray).mutableCopy() as! NSMutableArray
-      // Do NSMagic to remove several objects at once, not one by one
-      mutableJots.removeObjectsAtIndexes(indexSet)
-      // make NSArray from NSMutableArray
-      let immutableJots = NSArray(array: mutableJots)
-      // Replace entire model array by casting NSArray back to Swift Array
-      jots = immutableJots as! Array
-      
-      // TODO: Find proper animation
-      // modify view
-      tableView.deleteRowsAtIndexPaths(selectedPaths, withRowAnimation: .Automatic)
-      
-      // Delay
-      let seconds = 0.2
-      let delay = seconds * Double(NSEC_PER_SEC)  // nanoseconds per seconds
-      let dispatchTime = dispatch_time(DISPATCH_TIME_NOW, Int64(delay))
-      
-      dispatch_after(dispatchTime, dispatch_get_main_queue(), {
-         
-         // quit editing mode
-         self.setEditing(false, animated: true)
-         
-      })
-      
-      
-   }
-   
-   // Override to support rearranging the table view.
-   override func tableView(tableView: UITableView, moveRowAtIndexPath fromIndexPath: NSIndexPath, toIndexPath: NSIndexPath) {
-      
-      let jotToBeMoved = jots[fromIndexPath.row]
-      jots.removeAtIndex(fromIndexPath.row)
-      jots.insert(jotToBeMoved, atIndex: toIndexPath.row)
-      
-   }
-   
-   // MARK: NewJotController delegate methods
-   
-   func newJotController(contoller: NewJotController, didFinishAddingJot jot: Jot) {
-      jots.insert(jot, atIndex: 0)
-      // refresh table
-      tableView.reloadData()
-   }
-   
-   // MARK: JotInputCell delegate methods
-   
-   func jotInputCelldidUpdateTextView(cell: JotInputCell) {
-      tableView.beginUpdates()
-      tableView.endUpdates()
-   }
-   
-   
-   // Update navigation bar and handle placeholder
-   func jotInputCellIsActivated(cell: JotInputCell) {
-      self.navigationItem.rightBarButtonItem = nil // UIBarButtonItem(title: "Done", style: .Done, target: self, action: "jotAddedFromInputCell")
-      self.navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Cancel", style: .Plain, target: self, action: "dismissKeyboard:")
-      
-      if cell.textView.text == cell.placeholder {
-         cell.textView.textColor = UIColor.blackColor()
-         cell.textView.text = ""
-      }
-      
-      cell.tickboxSwitch.enabled = true
-   }
-   
-   //NB: model update is handled from AJC, not JIC
-   
-   
-   func jotAddedFromInputCell(cell: JotInputCell) {
-      
-      //TODO: Check for whitespace only, not absence of alphanumeric. Not good for Emojis
-      // Check if there is anything except whitespace
-      let alphanum = NSCharacterSet.alphanumericCharacterSet()
-      
-      guard let _ = cell.textView.text.rangeOfCharacterFromSet(alphanum) else {
-         dismissKeyboard(self)
-         return
-      }
-      
-      addJot(cell)
-      cell.endEditing(true)
-      
-      cell.makePlaceholder()
-      
-      // Disable "Cancel" button
-      self.navigationItem.leftBarButtonItem = nil
-      
-      tableView.beginUpdates()
-      tableView.endUpdates()
-      
-   }
-   
-   func addJot(cell: JotInputCell) {
-      let jot = Jot(string: cell.textView.text, title: nil)
-      jot.tagColor = cell.colorSelector
-      
-      if cell.tickboxSwitch.on {
-         jot.type = .Checkmark
-         cell.tickboxSwitch.setOn(false, animated: true)
-      }
-      
-      jots.insert(jot, atIndex: 0)
-      let indexPath = NSIndexPath(forRow: 0, inSection: 1)
-      tableView.insertRowsAtIndexPaths([indexPath], withRowAnimation: .Automatic)
-   }
-   
-   func dismissKeyboard(sender: AnyObject) {
-      if let cell = tableView.cellForRowAtIndexPath(NSIndexPath(forRow: 0, inSection: 0)) as? JotInputCell
-      {
-         self.navigationItem.leftBarButtonItem = nil
-         self.navigationItem.rightBarButtonItem = editButtonItem()
-         
-         cell.endEditing(true)
-         
-         if sender is UIBarButtonItem {
-            cell.makePlaceholder()
-         }
-         
-         cell.tickboxSwitch.setOn(false, animated: true)
-         cell.tickboxSwitch.enabled = false
-         
-         tableView.beginUpdates()
-         tableView.endUpdates()
-      }
-      
-   }
-   
+   */
 }
