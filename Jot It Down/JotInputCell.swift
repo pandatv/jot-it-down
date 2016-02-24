@@ -27,7 +27,7 @@ class JotInputCell: UITableViewCell, UITextViewDelegate {
     @IBOutlet weak var tickboxSwitch: UISwitch!
     
     
-    var delegate: JotInputCellDelegate?
+    weak var delegate: JotInputCellDelegate?
     
     let placeholder = "Jot it down!"
     

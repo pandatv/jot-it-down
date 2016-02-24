@@ -8,7 +8,7 @@
 
 import UIKit
 
-class AllJotsController: UITableViewController, NewJotControllerDelegate, JotInputCellDelegate {
+class AllJotsController: UITableViewController, NewJotControllerDelegate, JotInputCellDelegate, JotTableViewCellDelegate {
    
    
    var jots = [Jot]() {
@@ -190,6 +190,7 @@ class AllJotsController: UITableViewController, NewJotControllerDelegate, JotInp
          
          let cell = tableView.dequeueReusableCellWithIdentifier("standard", forIndexPath: indexPath) as! JotTableViewCell
          cell.jot = jot
+         cell.delegate = self 
          
          let jotType = jot.type!
          
@@ -518,6 +519,11 @@ class AllJotsController: UITableViewController, NewJotControllerDelegate, JotInp
          tableView.endUpdates()
       }
       
+   }
+   
+   // JotTableViewCell delegate methods
+   func jotTableViewCellDetectedLongPress(cell: JotTableViewCell) {
+      self.setEditing(true, animated: false)
    }
    
    /* // TO BE DEPRECATED
