@@ -12,7 +12,6 @@ import UIKit
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
-    var storyboard = UIStoryboard(name: "Main", bundle: nil) 
 
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
         
@@ -31,12 +30,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     
     func applicationWillEnterForeground(application: UIApplication) {
-        // WORKS WITH A WARNING, FIND WORKAROUND LATER
-//        let navCon = window!.rootViewController as! UINavigationController
-//        let NavConTwo = storyboard.instantiateViewControllerWithIdentifier("composeJotNavCon")
-//        // Transition style for consistency 
-//        NavConTwo.modalTransitionStyle = .CoverVertical
-//        navCon.presentViewController(NavConTwo, animated: true, completion: nil)
 
     }
 

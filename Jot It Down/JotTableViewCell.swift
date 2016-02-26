@@ -46,6 +46,10 @@ class JotTableViewCell: UITableViewCell {
         
         titleLabel.text = jot.title
         bodyTextView.text = jot.body
+        
+        // TODO: Test
+        // bodyTextView.textContainer.maximumNumberOfLines = 20
+        
         bodyTextView.font = UIFont.systemFontOfSize(16.0)
         bodyTextView.backgroundColor = UIColor.clearColor()
         
@@ -67,18 +71,20 @@ class JotTableViewCell: UITableViewCell {
             backgroundColor = UIColor.whiteColor() 
         }
         
-
-        
         let dateFormatter = NSDateFormatter()
-        dateFormatter.locale = NSLocale.currentLocale()
-        dateFormatter.dateFormat = "EEEE, MMM d" // "HH:mm:ss"
+        let calendar = NSCalendar.currentCalendar()
         
+        // Adjust date format
+        if calendar.compareDate(jot.createdAt, toDate: NSDate(), toUnitGranularity: .Day) == NSComparisonResult.OrderedSame {
+             dateFormatter.dateFormat = "HH:mm:ss"
+        } else {
+            dateFormatter.dateFormat = "EEEE, MMM d"
+        }
 
         createdAtLabel.text = dateFormatter.stringFromDate(jot.createdAt)
  
         
     }
-    
     
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -91,10 +97,6 @@ class JotTableViewCell: UITableViewCell {
         delegate?.jotTableViewCellDetectedLongPress(self)
     }
     
-
-    
-    
-
     /*
     override func setSelected(selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)

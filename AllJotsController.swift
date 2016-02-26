@@ -30,7 +30,8 @@ class AllJotsController: UITableViewController, NewJotControllerDelegate, JotInp
    override func viewDidLoad() {
       super.viewDidLoad()
       
-      // Uncomment to build a test array
+      // TODO: Test for empty state (model is empty)
+      // Uncomment to build a test array:
       buildTestArray()
    
       
@@ -190,7 +191,7 @@ class AllJotsController: UITableViewController, NewJotControllerDelegate, JotInp
          
          let cell = tableView.dequeueReusableCellWithIdentifier("standard", forIndexPath: indexPath) as! JotTableViewCell
          cell.jot = jot
-         cell.delegate = self 
+         cell.delegate = self
          
          let jotType = jot.type!
          
@@ -388,7 +389,7 @@ class AllJotsController: UITableViewController, NewJotControllerDelegate, JotInp
          }
          
          jots.insert(newJot, atIndex: index.row)
-         tableView.insertRowsAtIndexPaths([sortedRows.first!], withRowAnimation: .Bottom)
+         tableView.reloadData()
       }
    }
    
@@ -415,8 +416,12 @@ class AllJotsController: UITableViewController, NewJotControllerDelegate, JotInp
       // Replace entire model array by casting NSArray back to Swift Array
       jots = immutableJots as! Array
       
-      tableView.deleteRowsAtIndexPaths(selectedPaths, withRowAnimation: .Bottom)
+      tableView.deleteRowsAtIndexPaths(selectedPaths, withRowAnimation: .Automatic)
       
+      // exit editing of no jots left
+      if jots.isEmpty {
+         setEditing(false, animated: true)
+      }
    }
    
    // Override to support rearranging the table view.
@@ -476,8 +481,8 @@ class AllJotsController: UITableViewController, NewJotControllerDelegate, JotInp
       }
       
       addJot(cell)
-      cell.endEditing(true)
       
+      cell.endEditing(true)
       cell.makePlaceholder()
       
       // Disable "Cancel" button
@@ -487,6 +492,7 @@ class AllJotsController: UITableViewController, NewJotControllerDelegate, JotInp
       
    }
    
+   // TODO: Should I have it as a separate method? 
    func addJot(cell: JotInputCell) {
       let jot = Jot(string: cell.textView.text, title: nil)
       jot.tagColor = cell.colorSelector
@@ -523,7 +529,9 @@ class AllJotsController: UITableViewController, NewJotControllerDelegate, JotInp
    
    // JotTableViewCell delegate methods
    func jotTableViewCellDetectedLongPress(cell: JotTableViewCell) {
-      self.setEditing(true, animated: false)
+      if !editing {
+         self.setEditing(true, animated: false)
+      }
    }
    
    /* // TO BE DEPRECATED
