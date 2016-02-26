@@ -46,12 +46,10 @@ class JotTableViewCell: UITableViewCell {
         
         titleLabel.text = jot.title
         bodyTextView.text = jot.body
-        
-        // TODO: Test
-        // bodyTextView.textContainer.maximumNumberOfLines = 20
-        
         bodyTextView.font = UIFont.systemFontOfSize(16.0)
         bodyTextView.backgroundColor = UIColor.clearColor()
+        
+        // TODO: Cap on number of lines 
         
         tickbox.hidden = true
         
@@ -82,8 +80,7 @@ class JotTableViewCell: UITableViewCell {
         }
 
         createdAtLabel.text = dateFormatter.stringFromDate(jot.createdAt)
- 
-        
+
     }
     
     override func awakeFromNib() {
