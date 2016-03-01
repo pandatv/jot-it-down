@@ -20,7 +20,7 @@ class JotTableViewCell: UITableViewCell {
 
     @IBOutlet weak var createdAtLabel: UILabel!
     
-    @IBOutlet weak var bodyTextView: UnselectableTextView!
+    @IBOutlet weak var bodyTextView: UITextView!
 
     @IBOutlet weak var tickbox: UIButton!
 

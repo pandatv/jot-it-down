@@ -78,7 +78,7 @@
                                         <stackView opaque="NO" contentMode="scaleToFill" alignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="HEB-oh-Whi">
                                             <rect key="frame" x="8" y="36" width="584" height="87"/>
                                             <subviews>
-                                                <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" horizontalHuggingPriority="249" verticalCompressionResistancePriority="749" scrollEnabled="NO" editable="NO" text="Jot body" translatesAutoresizingMaskIntoConstraints="NO" id="iA1-kJ-iek" customClass="UnselectableTextView" customModule="Jot_It_Down" customModuleProvider="target">
+                                                <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" horizontalHuggingPriority="249" verticalCompressionResistancePriority="749" scrollEnabled="NO" editable="NO" text="Jot body" translatesAutoresizingMaskIntoConstraints="NO" id="iA1-kJ-iek">
                                                     <rect key="frame" x="0.0" y="19" width="534" height="50"/>
                                                     <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                                     <constraints>
