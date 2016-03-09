@@ -30,7 +30,6 @@ class AllJotsController: UITableViewController, NewJotControllerDelegate, JotInp
    override func viewDidLoad() {
       super.viewDidLoad()
       
-      // TODO: Test for empty state (model is empty)
       // Uncomment to build a test array:
       buildTestArray()
    
@@ -68,7 +67,6 @@ class AllJotsController: UITableViewController, NewJotControllerDelegate, JotInp
       
       // Remove separators altogether
       tableView.separatorStyle = .None
-      
       
    }
    
@@ -121,6 +119,7 @@ class AllJotsController: UITableViewController, NewJotControllerDelegate, JotInp
    
    // NUMBER OF SECTIONS
    override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
+      
       if !editing {
          return SectionBuilder.numberOfSections(jots, accountForInputRow: true)
       } else {
@@ -157,6 +156,17 @@ class AllJotsController: UITableViewController, NewJotControllerDelegate, JotInp
          return nil 
       }
 
+   }
+   
+   // TODO:
+   // SECTION INDEX
+   override func sectionIndexTitlesForTableView(tableView: UITableView) -> [String]? {
+      if !editing {
+         return SectionBuilder.namesForSections(jots).short
+      } else {
+         return nil
+      }
+      
    }
    
    //MARK: - Dispatch cells
@@ -367,14 +377,15 @@ class AllJotsController: UITableViewController, NewJotControllerDelegate, JotInp
       mergeSelected(andDelete: false)
    }
    
+   // TODO: Figure out line breaks 
    // Merge selected rows and insert above the uppermost selected
    func mergeSelected(andDelete delete: Bool) {
       if let selectedRows = tableView.indexPathsForSelectedRows {
          let sortedRows = selectedRows.sort({$0.row < $1.row})
          var mergedJotString = ""
          for indexPath in sortedRows {
-            mergedJotString += "\n"
             mergedJotString += jots[indexPath.row].body
+            mergedJotString += "\n"
          }
          // Instantiate new jot with a merged string
          let newJot = Jot(string: mergedJotString, title: nil)

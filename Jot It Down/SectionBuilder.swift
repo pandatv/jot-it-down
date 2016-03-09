@@ -31,6 +31,23 @@ class SectionBuilder {
         return self.arraysForSections(jots)[indexPath.section - (accountForInputRow ? 1 : 0)].interval[indexPath.row]
     }
     
+    // TODO:
+    class func namesForSections(jots: [Jot]) -> (full: [String], short: [String]) {
+        
+        var fullNames = [String]()
+        var shortNames = [String]()
+        
+        for section in self.arraysForSections(jots) {
+            fullNames.append(section.name)
+        }
+        
+        for _ in fullNames {
+            shortNames.append("*")
+        }
+        
+        return (fullNames, shortNames)
+    }
+    
     //MARK: - Private
 
     // Forbid instance creation
@@ -53,7 +70,7 @@ class SectionBuilder {
         static let thisWeek = "This Week"
         
         static var thisMonth: String {
-            return "Earlier in " + previousMonthsNames()[0]
+            return previousMonthsNames()[0]
         }
         
         static var monthAgo: String {
