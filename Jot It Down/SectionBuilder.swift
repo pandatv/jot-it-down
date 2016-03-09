@@ -22,11 +22,12 @@ class SectionBuilder {
         return self.arraysForSections(jots)[section - (accountForInputRow ? 1 : 0)].interval.count
     }
     
-    // Returns number of rows in section for UITableView, decrement by 1 if the input row is present
+    // Returns headers for rows in section for UITableView, decrement by 1 if the input row is present
     class func titleForHeaderInSection(jots: [Jot], section: Int, accountForInputRow: Bool) -> String {
         return self.arraysForSections(jots)[section - (accountForInputRow ? 1 : 0)].name
     }
     
+    // Returns data for certain row in UITableView
     class func jotForRowAtIndexPath(jots: [Jot], indexPath: NSIndexPath, accountForInputRow: Bool) -> Jot {
         return self.arraysForSections(jots)[indexPath.section - (accountForInputRow ? 1 : 0)].interval[indexPath.row]
     }

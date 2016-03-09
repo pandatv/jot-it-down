@@ -377,7 +377,7 @@ class AllJotsController: UITableViewController, NewJotControllerDelegate, JotInp
       mergeSelected(andDelete: false)
    }
    
-   // TODO: Figure out line breaks 
+   // TODO: Figure out line breaks
    // Merge selected rows and insert above the uppermost selected
    func mergeSelected(andDelete delete: Bool) {
       if let selectedRows = tableView.indexPathsForSelectedRows {
