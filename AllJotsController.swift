@@ -32,9 +32,8 @@ class AllJotsController: UITableViewController, NewJotControllerDelegate, JotInp
       
       // TODO: Test for empty state (model is empty)
       // Uncomment to build a test array:
-      // buildTestArray()
+      buildTestArray()
    
-      
       // register JotInputCell's nib
       tableView.registerNib(UINib(nibName: "JotInputCell", bundle: nil), forCellReuseIdentifier: "JotInputCell")
       
@@ -80,7 +79,7 @@ class AllJotsController: UITableViewController, NewJotControllerDelegate, JotInp
       let calendar = NSCalendar.currentCalendar()
       let todayComps = calendar.components([.Day], fromDate: NSDate())
       
-      for month in 1...2 {
+      for month in 1...3 {
          for day in 1...31 {
             let components = NSDateComponents()
             components.day = day
@@ -123,14 +122,14 @@ class AllJotsController: UITableViewController, NewJotControllerDelegate, JotInp
    // NUMBER OF SECTIONS
    override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
       if !editing {
-         return SectionBuilder.arraysForSections(jots).count + 1
+         return SectionBuilder.numberOfSections(jots, accountForInputRow: true)
       } else {
          return 2
       }
    }
    
    
-   // NUMBER OF ROWS
+   // NUMBER OF ROWS IN SECTION
    override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
    
       switch section {
@@ -139,12 +138,13 @@ class AllJotsController: UITableViewController, NewJotControllerDelegate, JotInp
       }
       
       if !editing {
-         return SectionBuilder.arraysForSections(jots)[section - 1].section.count
+         return SectionBuilder.numberOfRowsInSection(jots, section: section, accountForInputRow: true)
       } else {
          return jots.count
       }
    }
    
+   // SECTION TITLES 
    override func tableView(tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
       switch section {
       case 0: return nil
@@ -152,7 +152,7 @@ class AllJotsController: UITableViewController, NewJotControllerDelegate, JotInp
       }
       
       if !editing {
-               return SectionBuilder.arraysForSections(jots)[section - 1].name
+         return SectionBuilder.titleForHeaderInSection(jots, section: section, accountForInputRow: true)
       } else {
          return nil 
       }
@@ -182,12 +182,11 @@ class AllJotsController: UITableViewController, NewJotControllerDelegate, JotInp
          var jot: Jot! 
          
          if !editing {
-            jot = SectionBuilder.arraysForSections(jots)[indexPath.section - 1].section[indexPath.row]
+            jot = SectionBuilder.jotForRowAtIndexPath(jots, indexPath: indexPath, accountForInputRow: true)
          } else {
             jot = jots[indexPath.row]
          }
          
-
          
          let cell = tableView.dequeueReusableCellWithIdentifier("standard", forIndexPath: indexPath) as! JotTableViewCell
          cell.jot = jot
