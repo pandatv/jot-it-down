@@ -108,6 +108,16 @@ class SectionBuilder {
         return calendar.dateFromComponents(todayComps)
     }
     
+    class func checkForToday(jots: [Jot]) -> Bool {
+        for tuple in arraysForSections(jots) {
+            if tuple.name == SectionNames.today {
+                return true
+            }
+        }
+        
+        return false 
+    }
+    
     // Uses tuples to generate relevant section names
     private class func arraysForSections(jots: [Jot]) -> [(name: String, interval: [Jot])] {
         

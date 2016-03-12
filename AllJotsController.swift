@@ -305,7 +305,7 @@ class AllJotsController: UITableViewController, NewJotControllerDelegate, JotInp
       modifyToolbarsOnEditing(editing)
       toggleInputRowOnEditing(editing)
       
-     // Experiment with animations
+     // Smooth transition between table modes. This prevents swipes in main mode!
       UIView.transitionWithView(tableView,
          duration:0.2,
          options:.TransitionCrossDissolve,
@@ -490,15 +490,23 @@ class AllJotsController: UITableViewController, NewJotControllerDelegate, JotInp
          return
       }
       
-      addJot(cell)
       
       cell.endEditing(true)
-      cell.makePlaceholder()
       
       // Disable "Cancel" button
       self.navigationItem.leftBarButtonItem = nil
       
-      tableView.reloadData()
+      
+      // See if today's section exist, if yes — reload it, if no — refresh whole table
+      if SectionBuilder.checkForToday(jots) {
+         addJot(cell) 
+         tableView.reloadSections(NSIndexSet(index: 1), withRowAnimation: .Automatic)
+      } else {
+         addJot(cell)
+         tableView.reloadData()
+      }
+      
+      cell.makePlaceholder()
       
    }
    
