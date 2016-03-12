@@ -498,11 +498,11 @@ class AllJotsController: UITableViewController, NewJotControllerDelegate, JotInp
       
       
       // See if today's section exist, if yes — reload it, if no — refresh whole table
-      if SectionBuilder.checkForToday(jots) {
-         addJot(cell) 
+      if SectionBuilder.checkIfThereIsToday(jots) {
+         addJotToModel(cell)
          tableView.reloadSections(NSIndexSet(index: 1), withRowAnimation: .Automatic)
       } else {
-         addJot(cell)
+         addJotToModel(cell)
          tableView.reloadData()
       }
       
@@ -510,8 +510,7 @@ class AllJotsController: UITableViewController, NewJotControllerDelegate, JotInp
       
    }
    
-   // TODO: Should I have it as a separate method? 
-   func addJot(cell: JotInputCell) {
+   func addJotToModel(cell: JotInputCell) {
       let jot = Jot(string: cell.textView.text, title: nil)
       jot.tagColor = cell.colorSelector
       

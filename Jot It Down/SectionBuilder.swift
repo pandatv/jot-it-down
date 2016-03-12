@@ -32,6 +32,17 @@ class SectionBuilder {
         return self.arraysForSections(jots)[indexPath.section - (accountForInputRow ? 1 : 0)].interval[indexPath.row]
     }
     
+    // Checks if today's section has been generated
+    class func checkIfThereIsToday(jots: [Jot]) -> Bool {
+        for tuple in arraysForSections(jots) {
+            if tuple.name == SectionNames.today {
+                return true
+            }
+        }
+        
+        return false
+    }
+    
     // TODO:
     class func namesForSections(jots: [Jot]) -> (full: [String], short: [String]) {
         
@@ -106,16 +117,6 @@ class SectionBuilder {
         let todayComps = calendar.components([.Month, .Year], fromDate: now)
         todayComps.month -= monthsBack
         return calendar.dateFromComponents(todayComps)
-    }
-    
-    class func checkForToday(jots: [Jot]) -> Bool {
-        for tuple in arraysForSections(jots) {
-            if tuple.name == SectionNames.today {
-                return true
-            }
-        }
-        
-        return false 
     }
     
     // Uses tuples to generate relevant section names
