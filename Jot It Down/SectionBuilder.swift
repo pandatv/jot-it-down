@@ -119,6 +119,7 @@ class SectionBuilder {
         return calendar.dateFromComponents(todayComps)
     }
     
+    // TODO: Re-write with flatMap()! 
     // Uses tuples to generate relevant section names
     private class func arraysForSections(jots: [Jot]) -> [(name: String, interval: [Jot])] {
         

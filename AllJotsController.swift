@@ -8,7 +8,10 @@
 
 import UIKit
 
-class AllJotsController: UITableViewController, NewJotControllerDelegate, JotInputCellDelegate, JotTableViewCellDelegate {
+//TODO: Refactor navbar drawing code!
+
+
+class AllJotsController: UITableViewController {
    
    
    var jots = [Jot]() {
@@ -18,6 +21,7 @@ class AllJotsController: UITableViewController, NewJotControllerDelegate, JotInp
             self.toolbarItems = normalToolbar()
          }
          
+         // TODO: DRY
          // UI changes for empty state
          if jots.isEmpty {
             self.navigationItem.rightBarButtonItem = nil
@@ -26,6 +30,13 @@ class AllJotsController: UITableViewController, NewJotControllerDelegate, JotInp
          }
       }
    }
+   
+   var filteredJots = [Jot]()
+   
+   // Create a search controller
+   let searchController = UISearchController(searchResultsController: nil)
+   
+
    
    override func viewDidLoad() {
       super.viewDidLoad()
@@ -41,13 +52,15 @@ class AllJotsController: UITableViewController, NewJotControllerDelegate, JotInp
       tableView.estimatedRowHeight = tableView.rowHeight
       tableView.rowHeight = UITableViewAutomaticDimension
       
-      // Bottom toolbar that displays "Compose" icon that presents NewJotController
+      // Show toolbar
       navigationController?.toolbarHidden = false
       
       // Toolbar for a normal table state
       self.toolbarItems = normalToolbar()
       
-      // Toggle "Edit" button
+      drawSearchButton()
+      
+      // TODO: DRY! (jots property observer)
       switch jots.isEmpty {
       case true: self.navigationItem.rightBarButtonItem = nil
       case false: self.navigationItem.rightBarButtonItem = self.editButtonItem()
@@ -62,14 +75,17 @@ class AllJotsController: UITableViewController, NewJotControllerDelegate, JotInp
       tapRecognizer.cancelsTouchesInView = false
       view.addGestureRecognizer(tapRecognizer)
       
-      // Remove separators for empty rows (hack?)
+      // Remove separators for empty rows (hacky way)
       tableView.tableFooterView = UIView(frame: CGRectZero)
       
       // Remove separators altogether
       tableView.separatorStyle = .None
       
+      configureSearchController()
+
+      
    }
-   
+
    func buildTestArray() {
       
       let string = "На шестой международной конференции в Женеве наши делегации выступили с пакетом конструктивных предложений, направленных на углубление процессов интеграции в Европе. А я не поехал."
@@ -96,6 +112,7 @@ class AllJotsController: UITableViewController, NewJotControllerDelegate, JotInp
       // Reverse so the latest date is on top
       jots = jots.reverse()
    }
+
    
    func handleSingleTap(recognizer: UITapGestureRecognizer) {
       dismissKeyboard(self)
@@ -120,6 +137,13 @@ class AllJotsController: UITableViewController, NewJotControllerDelegate, JotInp
    // NUMBER OF SECTIONS
    override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
       
+      if searchController.active && searchController.searchBar.text == "" {
+         return 0
+      } else if searchController.active && searchController.searchBar.text != "" {
+         return 1
+      }
+      
+      
       if !editing {
          return SectionBuilder.numberOfSections(jots, accountForInputRow: true)
       } else {
@@ -130,6 +154,10 @@ class AllJotsController: UITableViewController, NewJotControllerDelegate, JotInp
    
    // NUMBER OF ROWS IN SECTION
    override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+      
+      if searchController.active && searchController.searchBar.text != "" {
+         return filteredJots.count
+      }
    
       switch section {
       case 0: return 1
@@ -159,6 +187,7 @@ class AllJotsController: UITableViewController, NewJotControllerDelegate, JotInp
    }
    
    // TODO:
+   /*
    // SECTION INDEX
    override func sectionIndexTitlesForTableView(tableView: UITableView) -> [String]? {
       if !editing {
@@ -168,13 +197,22 @@ class AllJotsController: UITableViewController, NewJotControllerDelegate, JotInp
       }
       
    }
+   */
    
    //MARK: - Dispatch cells
    
    override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
       
       
-      var cellToReturn: UITableViewCell?
+      var cellToReturn: UITableViewCell
+      
+      if searchController.active && searchController.searchBar.text != "" {
+         var jot: Jot
+         let cell = tableView.dequeueReusableCellWithIdentifier("standard") as! JotTableViewCell
+         jot = filteredJots[indexPath.row]
+         cell.jot = jot
+         return cell
+      }
       
       
       if indexPath.section == 0 {
@@ -189,7 +227,7 @@ class AllJotsController: UITableViewController, NewJotControllerDelegate, JotInp
          
       } else {
          
-         var jot: Jot! 
+         var jot: Jot
          
          if !editing {
             jot = SectionBuilder.jotForRowAtIndexPath(jots, indexPath: indexPath, accountForInputRow: true)
@@ -200,7 +238,6 @@ class AllJotsController: UITableViewController, NewJotControllerDelegate, JotInp
          
          let cell = tableView.dequeueReusableCellWithIdentifier("standard", forIndexPath: indexPath) as! JotTableViewCell
          cell.jot = jot
-         cell.delegate = self
          
          let jotType = jot.type!
          
@@ -215,7 +252,7 @@ class AllJotsController: UITableViewController, NewJotControllerDelegate, JotInp
          
       }
       
-      return cellToReturn!
+      return cellToReturn
       
    }
    
@@ -226,17 +263,13 @@ class AllJotsController: UITableViewController, NewJotControllerDelegate, JotInp
       if !editing {
          tableView.deselectRowAtIndexPath(indexPath, animated: true)
          
-         // Test checkbox selection
-         let cell = tableView.cellForRowAtIndexPath(indexPath)
-         switch cell!.reuseIdentifier! {
-         case "standard": break
-         case "test":
-            if cell?.accessoryType == .Checkmark {
-               cell?.accessoryType = .None
-            } else {
-               cell?.accessoryType = .Checkmark
-            }
-         default: break
+         //TODO: DRY!
+         // Clicked on row when a search result is presnted
+         if searchController.active {
+            searchController.active = false
+            navigationItem.titleView = nil
+            navigationItem.rightBarButtonItem = editButtonItem()
+            drawSearchButton()
          }
       }
       
@@ -302,10 +335,11 @@ class AllJotsController: UITableViewController, NewJotControllerDelegate, JotInp
       super.setEditing(editing, animated: animated)
       
       
+      toggleSearchButtonOnEditing(editing)
       modifyToolbarsOnEditing(editing)
       toggleInputRowOnEditing(editing)
       
-     // Smooth transition between table modes. This prevents swipes in main mode!
+     // MAGIC. Smooth transition between table modes. Prevents default swipes in main mode!
       UIView.transitionWithView(tableView,
          duration:0.2,
          options:.TransitionCrossDissolve,
@@ -314,6 +348,14 @@ class AllJotsController: UITableViewController, NewJotControllerDelegate, JotInp
             self.tableView.reloadData()
          },
          completion: nil);
+   }
+   
+   func toggleSearchButtonOnEditing(editing: Bool) {
+      if editing {
+         navigationItem.leftBarButtonItem = nil
+      } else {
+         drawSearchButton()
+      }
    }
    
    // Make interface changes
@@ -445,109 +487,5 @@ class AllJotsController: UITableViewController, NewJotControllerDelegate, JotInp
       
       jots.insert(jotToBeMoved, atIndex: toIndexPath.row)
       
-   }
-   
-   // MARK: NewJotController delegate methods
-   
-   func newJotController(contoller: NewJotController, didFinishAddingJot jot: Jot) {
-      jots.insert(jot, atIndex: 0)
-      // refresh table
-      tableView.reloadData()
-   }
-   
-   // MARK: JotInputCell delegate methods
-   
-   func jotInputCelldidUpdateTextView(cell: JotInputCell) {
-      tableView.beginUpdates()
-      tableView.endUpdates()
-   }
-   
-   
-   // Update navigation bar and handle placeholder
-   func jotInputCellIsActivated(cell: JotInputCell) {
-      self.navigationItem.rightBarButtonItem = nil // UIBarButtonItem(title: "Done", style: .Done, target: self, action: "jotAddedFromInputCell")
-      self.navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Cancel", style: .Plain, target: self, action: "dismissKeyboard:")
-      
-      if cell.textView.text == cell.placeholder {
-         cell.textView.textColor = UIColor.blackColor()
-         cell.textView.text = ""
-      }
-      
-      cell.tickboxSwitch.enabled = true
-   }
-   
-   //NB: model update is handled from AJC, not JIC
-   
-   
-   func jotAddedFromInputCell(cell: JotInputCell) {
-      
-      //TODO: Check for whitespace only, not absence of alphanumeric. Not good for Emojis
-      // Check if there is anything except whitespace
-      let alphanum = NSCharacterSet.alphanumericCharacterSet()
-      
-      guard let _ = cell.textView.text.rangeOfCharacterFromSet(alphanum) else {
-         dismissKeyboard(self)
-         return
-      }
-      
-      
-      cell.endEditing(true)
-      
-      // Disable "Cancel" button
-      self.navigationItem.leftBarButtonItem = nil
-      
-      
-      // See if today's section exist, if yes — reload it, if no — refresh whole table
-      if SectionBuilder.checkIfThereIsToday(jots) {
-         addJotToModel(cell)
-         tableView.reloadSections(NSIndexSet(index: 1), withRowAnimation: .Automatic)
-      } else {
-         addJotToModel(cell)
-         tableView.reloadData()
-      }
-      
-      cell.makePlaceholder()
-      
-   }
-   
-   func addJotToModel(cell: JotInputCell) {
-      let jot = Jot(string: cell.textView.text, title: nil)
-      jot.tagColor = cell.colorSelector
-      
-      if cell.tickboxSwitch.on {
-         jot.type = .Checkmark
-         cell.tickboxSwitch.setOn(false, animated: true)
-      }
-            
-      jots.insert(jot, atIndex: 0)
-
-   }
-   
-   func dismissKeyboard(sender: AnyObject) {
-      if let cell = tableView.cellForRowAtIndexPath(NSIndexPath(forRow: 0, inSection: 0)) as? JotInputCell
-      {
-         self.navigationItem.leftBarButtonItem = nil
-         self.navigationItem.rightBarButtonItem = editButtonItem()
-         
-         cell.endEditing(true)
-         
-         if sender is UIBarButtonItem {
-            cell.makePlaceholder()
-         }
-         
-         cell.tickboxSwitch.setOn(false, animated: true)
-         cell.tickboxSwitch.enabled = false
-         
-         tableView.beginUpdates()
-         tableView.endUpdates()
-      }
-      
-   }
-   
-   // JotTableViewCell delegate methods
-   func jotTableViewCellDetectedLongPress(cell: JotTableViewCell) {
-      if !editing {
-         self.setEditing(true, animated: false)
-      }
    }
 }

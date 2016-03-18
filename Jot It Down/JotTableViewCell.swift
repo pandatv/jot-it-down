@@ -8,13 +8,8 @@
 
 import UIKit
 
-protocol JotTableViewCellDelegate: class {
-    func jotTableViewCellDetectedLongPress(cell: JotTableViewCell)
-}
 
 class JotTableViewCell: UITableViewCell {
-    
-    weak var delegate: JotTableViewCellDelegate? 
     
     @IBOutlet weak var titleLabel: UILabel!
 
@@ -86,13 +81,8 @@ class JotTableViewCell: UITableViewCell {
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
-        let longPress = UILongPressGestureRecognizer(target: self, action: "longPressDetected")
-        self.addGestureRecognizer(longPress)
     }
     
-    func longPressDetected() {
-        delegate?.jotTableViewCellDetectedLongPress(self)
-    }
     
     /*
     override func setSelected(selected: Bool, animated: Bool) {

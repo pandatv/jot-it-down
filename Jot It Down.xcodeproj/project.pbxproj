@@ -16,6 +16,7 @@
 		B918F1821C5F6BF2008712C1 /* NewJotController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B918F1811C5F6BF2008712C1 /* NewJotController.swift */; };
 		B918F1841C627550008712C1 /* JotTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B918F1831C627550008712C1 /* JotTableViewCell.swift */; };
 		B918F1861C6275F1008712C1 /* Jot.swift in Sources */ = {isa = PBXBuildFile; fileRef = B918F1851C6275F1008712C1 /* Jot.swift */; };
+		B96CEBE91C9C1A0500801513 /* AJCExtenstions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B96CEBE81C9C1A0500801513 /* AJCExtenstions.swift */; };
 		B990A66B1C6799EA00ECEBDD /* JotInputCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B990A66A1C6799EA00ECEBDD /* JotInputCell.swift */; };
 		B9CCB6E71C6796F1009B1648 /* JotInputCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = B9CCB6E61C6796F1009B1648 /* JotInputCell.xib */; };
 		B9D723581C7AEF6000B99BAE /* SectionBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9D723571C7AEF6000B99BAE /* SectionBuilder.swift */; };
@@ -33,6 +34,7 @@
 		B918F1811C5F6BF2008712C1 /* NewJotController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NewJotController.swift; sourceTree = "<group>"; };
 		B918F1831C627550008712C1 /* JotTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JotTableViewCell.swift; sourceTree = "<group>"; };
 		B918F1851C6275F1008712C1 /* Jot.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Jot.swift; sourceTree = "<group>"; };
+		B96CEBE81C9C1A0500801513 /* AJCExtenstions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AJCExtenstions.swift; sourceTree = "<group>"; };
 		B990A66A1C6799EA00ECEBDD /* JotInputCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JotInputCell.swift; sourceTree = "<group>"; };
 		B9CCB6E61C6796F1009B1648 /* JotInputCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = JotInputCell.xib; sourceTree = "<group>"; };
 		B9D723571C7AEF6000B99BAE /* SectionBuilder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SectionBuilder.swift; sourceTree = "<group>"; };
@@ -71,16 +73,17 @@
 				B918F1851C6275F1008712C1 /* Jot.swift */,
 				B9D723571C7AEF6000B99BAE /* SectionBuilder.swift */,
 				B918F16B1C5F6040008712C1 /* AppDelegate.swift */,
-				B918F1811C5F6BF2008712C1 /* NewJotController.swift */,
-				B918F17D1C5F6AD9008712C1 /* AllJotsController.swift */,
 				B990A66A1C6799EA00ECEBDD /* JotInputCell.swift */,
+				B918F17D1C5F6AD9008712C1 /* AllJotsController.swift */,
+				B96CEBE81C9C1A0500801513 /* AJCExtenstions.swift */,
 				B918F1831C627550008712C1 /* JotTableViewCell.swift */,
-				8E4D67F81C8069C400536959 /* Clippings.swift */,
 				B918F16F1C5F6040008712C1 /* Main.storyboard */,
 				B9CCB6E61C6796F1009B1648 /* JotInputCell.xib */,
 				B918F1721C5F6040008712C1 /* Assets.xcassets */,
 				B918F1741C5F6040008712C1 /* LaunchScreen.storyboard */,
 				B918F1771C5F6040008712C1 /* Info.plist */,
+				B918F1811C5F6BF2008712C1 /* NewJotController.swift */,
+				8E4D67F81C8069C400536959 /* Clippings.swift */,
 				B918F1691C5F6040008712C1 /* Products */,
 			);
 			path = "Jot It Down";
@@ -164,6 +167,7 @@
 				B918F1841C627550008712C1 /* JotTableViewCell.swift in Sources */,
 				8E4D67F91C8069C400536959 /* Clippings.swift in Sources */,
 				B918F1821C5F6BF2008712C1 /* NewJotController.swift in Sources */,
+				B96CEBE91C9C1A0500801513 /* AJCExtenstions.swift in Sources */,
 				B918F17E1C5F6AD9008712C1 /* AllJotsController.swift in Sources */,
 				B918F1861C6275F1008712C1 /* Jot.swift in Sources */,
 				B9D723581C7AEF6000B99BAE /* SectionBuilder.swift in Sources */,
