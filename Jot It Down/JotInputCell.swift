@@ -124,10 +124,10 @@ class JotInputCell: UITableViewCell, UITextViewDelegate {
         let button = UIButton(type: .System)
         button.setTitle("Show Numpad", forState: .Normal)
         button.sizeToFit()
-        button.addTarget(self, action: "toggleNumpad:", forControlEvents: .TouchUpInside)
+        button.addTarget(self, action: #selector(JotInputCell.toggleNumpad(_:)), forControlEvents: .TouchUpInside)
         
         // Test functionality, evaluate UI experience 
-        let doneButton = UIBarButtonItem(title: "Add", style: .Done, target: self, action: "addJot")
+        let doneButton = UIBarButtonItem(title: "Add", style: .Done, target: self, action: #selector(JotInputCell.addJot))
         let flex = UIBarButtonItem(barButtonSystemItem: .FlexibleSpace, target: self, action: nil)
         
         accView.items = [UIBarButtonItem(customView: button), flex, doneButton]

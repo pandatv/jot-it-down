@@ -58,6 +58,7 @@ class AllJotsController: UITableViewController {
       // Toolbar for a normal table state
       self.toolbarItems = normalToolbar()
       
+      // Put a search icon into navbar
       drawSearchButton()
       
       // TODO: DRY! (jots property observer)
@@ -70,7 +71,7 @@ class AllJotsController: UITableViewController {
       tableView.allowsMultipleSelectionDuringEditing = true
       
       // Experimenting with tap recognizer to dismiss keyboard on tap out of the cell
-      let tapRecognizer = UITapGestureRecognizer(target: self, action: "handleSingleTap:")
+      let tapRecognizer = UITapGestureRecognizer(target: self, action: #selector(AllJotsController.handleSingleTap(_:)))
       // !!!
       tapRecognizer.cancelsTouchesInView = false
       view.addGestureRecognizer(tapRecognizer)
@@ -85,37 +86,11 @@ class AllJotsController: UITableViewController {
 
       
    }
-
-   func buildTestArray() {
-      
-      let string = "На шестой международной конференции в Женеве наши делегации выступили с пакетом конструктивных предложений, направленных на углубление процессов интеграции в Европе. А я не поехал."
-      
-      let calendar = NSCalendar.currentCalendar()
-      let todayComps = calendar.components([.Day], fromDate: NSDate())
-      
-      for month in 1...3 {
-         for day in 1...31 {
-            let components = NSDateComponents()
-            components.day = day
-            components.month = month
-            components.year = 2016
-            // Check if components are set to a valid date so we don't return extra days
-            if components.isValidDateInCalendar(calendar) && components.day <= todayComps.day {
-               let date = calendar.dateFromComponents(components)
-               let jot = Jot(string: string, title: nil)
-               jot.createdAt = date!
-               jots.append(jot)
-            }
-         }
-      }
-      
-      // Reverse so the latest date is on top
-      jots = jots.reverse()
-   }
-
    
    func handleSingleTap(recognizer: UITapGestureRecognizer) {
-      dismissKeyboard(self)
+      if !editing {
+         dismissKeyboard(self)
+      }
    }
    
    // helper
@@ -206,6 +181,7 @@ class AllJotsController: UITableViewController {
       
       var cellToReturn: UITableViewCell
       
+      // We're searching and displaying results in the same VC
       if searchController.active && searchController.searchBar.text != "" {
          var jot: Jot
          let cell = tableView.dequeueReusableCellWithIdentifier("standard") as! JotTableViewCell
@@ -215,6 +191,7 @@ class AllJotsController: UITableViewController {
       }
       
       
+      // We're not searching, first section is reserved for input row
       if indexPath.section == 0 {
          
          let cell = tableView.dequeueReusableCellWithIdentifier("JotInputCell") as! JotInputCell
@@ -224,7 +201,8 @@ class AllJotsController: UITableViewController {
          // Disable selection
          cell.selectionStyle = UITableViewCellSelectionStyle.None
          
-         
+      
+      // Other section's behavior depends on the model
       } else {
          
          var jot: Jot
@@ -285,6 +263,7 @@ class AllJotsController: UITableViewController {
    
    // Possible bugs
    func updateToolbarOnMultipleSelection() {
+      
       if editing && tableView.indexPathsForSelectedRows?.count > 1 {
          toolbarItems![0].title = "Merge (\(tableView.indexPathsForSelectedRows!.count))"
       } else {
@@ -320,7 +299,6 @@ class AllJotsController: UITableViewController {
    
    // Override to support editing the table view.
    override func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {
-      
       if editingStyle == .Delete {
          jots.removeAtIndex(indexPath.row)
          tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: .Fade)
@@ -350,6 +328,7 @@ class AllJotsController: UITableViewController {
          completion: nil);
    }
    
+   // TODO: Bug: Button re-appears on select row in editing mode
    func toggleSearchButtonOnEditing(editing: Bool) {
       if editing {
          navigationItem.leftBarButtonItem = nil
@@ -404,10 +383,10 @@ class AllJotsController: UITableViewController {
    // return toolbar items for editing state
    func editToolbar() -> [UIBarButtonItem] {
       
-      // Create placeholders for "Merge" and "Delete" buttons that will appear on multiple row selection
-      return [UIBarButtonItem(title: nil, style: .Plain, target: self, action: "mergeAndDelete"),
+      // Create placeholders for "Merge" and "Delete" buttons that will appear on mul  tiple row selection
+      return [UIBarButtonItem(title: nil, style: .Plain, target: self, action: #selector(AllJotsController.mergeAndDelete)),
          UIBarButtonItem(barButtonSystemItem: .FlexibleSpace, target: self, action: nil),
-         UIBarButtonItem(title: nil, style: .Plain, target: self, action: "deleteSelectedRows")]
+         UIBarButtonItem(title: nil, style: .Plain, target: self, action: #selector(AllJotsController.deleteSelectedRows))]
    }
    
    func mergeAndDelete() {
@@ -488,4 +467,32 @@ class AllJotsController: UITableViewController {
       jots.insert(jotToBeMoved, atIndex: toIndexPath.row)
       
    }
+   
+   func buildTestArray() {
+      
+      let string = "На шестой международной конференции в Женеве наши делегации выступили с пакетом конструктивных предложений, направленных на углубление процессов интеграции в Европе. А я не поехал."
+      
+      let calendar = NSCalendar.currentCalendar()
+      let todayComps = calendar.components([.Day], fromDate: NSDate())
+      
+      for month in 1...3 {
+         for day in 1...31 {
+            let components = NSDateComponents()
+            components.day = day
+            components.month = month
+            components.year = 2016
+            // Check if components are set to a valid date so we don't return extra days
+            if components.isValidDateInCalendar(calendar) && components.day <= todayComps.day {
+               let date = calendar.dateFromComponents(components)
+               let jot = Jot(string: string, title: nil)
+               jot.createdAt = date!
+               jots.append(jot)
+            }
+         }
+      }
+      
+      // Reverse so the latest date is on top
+      jots = jots.reverse()
+   }
 }
+

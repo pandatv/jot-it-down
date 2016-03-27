@@ -23,6 +23,7 @@ extension AllJotsController:  NewJotControllerDelegate, JotInputCellDelegate {
     
     func jotInputCelldidUpdateTextView(cell: JotInputCell) {
         tableView.beginUpdates()
+        print("!")
         tableView.endUpdates()
     }
     
@@ -30,7 +31,7 @@ extension AllJotsController:  NewJotControllerDelegate, JotInputCellDelegate {
     // Update navigation bar and handle placeholder
     func jotInputCellIsActivated(cell: JotInputCell) {
         self.navigationItem.rightBarButtonItem = nil
-        self.navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Cancel", style: .Plain, target: self, action: "dismissKeyboard:")
+        self.navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Cancel", style: .Plain, target: self, action: #selector(AllJotsController.dismissKeyboard(_:)))
         
         if cell.textView.text == cell.placeholder {
             cell.textView.textColor = UIColor.blackColor()
@@ -63,8 +64,12 @@ extension AllJotsController:  NewJotControllerDelegate, JotInputCellDelegate {
             tableView.reloadData()
         }
         
-        dismissKeyboard(self)
+        //Height shrinking after multi-line input would be broken if order is changed 
         cell.makePlaceholder()
+        dismissKeyboard(self)
+        
+        
+        
         
     }
     
@@ -136,7 +141,7 @@ extension AllJotsController: UISearchResultsUpdating, UISearchBarDelegate {
     }
     
     func drawSearchButton() {
-        navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .Search, target: self, action: "searchButtonPressed:")
+        navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .Search, target: self, action: #selector(AllJotsController.searchButtonPressed(_:)))
     }
 
     func configureSearchController() {
