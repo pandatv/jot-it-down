@@ -22,9 +22,11 @@ extension AllJotsController:  NewJotControllerDelegate, JotInputCellDelegate {
     // MARK: JotInputCell delegate methods
     
     func jotInputCelldidUpdateTextView(cell: JotInputCell) {
+        // fights jittering
+        UIView.setAnimationsEnabled(false)
         tableView.beginUpdates()
-        print("!")
         tableView.endUpdates()
+        UIView.setAnimationsEnabled(true)
     }
     
     

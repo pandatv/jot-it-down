@@ -21,8 +21,8 @@
                         <constraints>
                             <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="50" id="Ltu-JL-DmF"/>
                         </constraints>
-                        <fontDescription key="fontDescription" type="system" pointSize="20"/>
-                        <textInputTraits key="textInputTraits" keyboardType="twitter"/>
+                        <fontDescription key="fontDescription" type="system" pointSize="18"/>
+                        <textInputTraits key="textInputTraits" autocapitalizationType="sentences" keyboardType="twitter"/>
                         <variation key="default">
                             <mask key="constraints">
                                 <exclude reference="Ltu-JL-DmF"/>

@@ -365,7 +365,7 @@ class AllJotsController: UITableViewController {
       }
       return UITableViewAutomaticDimension
    }
-   
+      
    
    // TODO: Re-write toolbar creation for nicer code, consider compose button in normal state
    

@@ -100,14 +100,7 @@ class JotInputCell: UITableViewCell, UITextViewDelegate {
 
     
     func textViewDidChange(textView: UITextView) {
-        
-        let size = textView.bounds.size
-        let newSize = textView.sizeThatFits(CGSize(width: size.width, height: CGFloat.max))
-        
-        // Resize the cell only when cell's size is changed
-        if size.height != newSize.height {
-            delegate?.jotInputCelldidUpdateTextView(self)
-        }
+        delegate?.jotInputCelldidUpdateTextView(self)
     }
     
     func textViewDidBeginEditing(textView: UITextView) {
