@@ -58,7 +58,7 @@ class NewJotController: UIViewController, UITextViewDelegate {
     
     // Keyboard observer
     func observeKeyboard() {
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "resizeForKeyboard:", name: UIKeyboardWillShowNotification, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(NewJotController.resizeForKeyboard(_:)), name: UIKeyboardWillShowNotification, object: nil)
     }
     
     // Update constraint on keyboard appearance (called from keyboard observer)
@@ -79,7 +79,7 @@ class NewJotController: UIViewController, UITextViewDelegate {
         let button = UIButton(type: .System)
         button.setTitle("Show Numpad", forState: .Normal)
         button.sizeToFit()
-        button.addTarget(self, action: "toggleNumpad:", forControlEvents: .TouchUpInside)
+        button.addTarget(self, action: #selector(NewJotController.toggleNumpad(_:)), forControlEvents: .TouchUpInside)
         
         accView.items = [UIBarButtonItem(customView: button)]
         

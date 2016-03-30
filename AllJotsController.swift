@@ -401,7 +401,7 @@ class AllJotsController: UITableViewController {
       let flexSpace = UIBarButtonItem(barButtonSystemItem: .FlexibleSpace, target: self, action: nil)
       // let composeJot = UIBarButtonItem(barButtonSystemItem: .Compose, target: self, action: "composeJot")
       let jotCount = UIBarButtonItem(title: "\(jots.count) Jots", style: .Plain, target: self, action: nil)
-      let sharingIcon = UIBarButtonItem(barButtonSystemItem: .Action, target: self, action: #selector(shareLastAdded))
+      let sharingIcon = UIBarButtonItem(barButtonSystemItem: .Action, target: self, action: #selector(presentSharingOptions))
       
       return [flexSpace, jotCount, flexSpace, sharingIcon]
       
@@ -416,38 +416,7 @@ class AllJotsController: UITableViewController {
          UIBarButtonItem(barButtonSystemItem: .FlexibleSpace, target: self, action: nil),
          UIBarButtonItem(title: nil, style: .Plain, target: self, action: #selector(mergeAndDelete)),
          UIBarButtonItem(barButtonSystemItem: .FlexibleSpace, target: self, action: nil),
-         UIBarButtonItem(barButtonSystemItem: .Action, target: self, action: #selector(shareSelected))]
-   }
-   
-   func shareLastAdded() {
-      if !jots.isEmpty {
-         let path = NSIndexPath(forRow: 0, inSection: 1)
-         tableView.selectRowAtIndexPath(path, animated: true, scrollPosition: UITableViewScrollPosition.Top)
-         shareSelected()
-      }
-      
-   }
-   
-   func shareSelected() {
-      if let selJots = selectedJotsStrings() {
-         let vc = UIActivityViewController(activityItems: [selJots], applicationActivities: [])
-         
-         // Need this line for an iPad
-         vc.popoverPresentationController?.barButtonItem = toolbarItems![3]
-         
-         presentViewController(vc, animated: true, completion: nil)
-      }
-   }
-   
-   // Makes unique string by concatenating all selected jot's strings
-   func selectedJotsStrings() -> String? {
-      guard let selectedPaths = tableView.indexPathsForSelectedRows else { return nil }
-      var stringsFromSelectedJots = [String]()
-      let sortedPaths = selectedPaths.sort {$0.row < $1.row }
-      for path in sortedPaths {
-         stringsFromSelectedJots.append(jots[path.row].body)
-      }
-      return stringsFromSelectedJots.joinWithSeparator("\n")
+         UIBarButtonItem(barButtonSystemItem: .Action, target: self, action: #selector(shareSelectedPaths))]
    }
    
    func mergeAndDelete() {
