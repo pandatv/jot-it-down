@@ -81,6 +81,17 @@ class JotTableViewCell: UITableViewCell {
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
+        
+        // Swipe testing
+        // TODO: kill if not needed 
+        let swipe = UISwipeGestureRecognizer(target: self, action: #selector(testSwipe))
+        swipe.direction = .Left
+        swipe.numberOfTouchesRequired = 1
+        self.addGestureRecognizer(swipe)
+    }
+    
+    func testSwipe() {
+        print("Swipe detected")
     }
     
     

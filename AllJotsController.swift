@@ -83,7 +83,6 @@ class AllJotsController: UITableViewController {
       tableView.separatorStyle = .None
       
       configureSearchController()
-
       
    }
    
@@ -174,7 +173,7 @@ class AllJotsController: UITableViewController {
    }
    */
    
-   //MARK: - Dispatch cells
+   //DISPATCH CELLS
    
    override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
       
@@ -230,10 +229,25 @@ class AllJotsController: UITableViewController {
          
       }
       
+      // TODO: make sure it works with a swipe 
+      // Disable cell selection in normal mode
+      if editing {
+         cellToReturn.selectionStyle = .Blue
+      } else {
+         cellToReturn.selectionStyle = .None
+      }
+      
       return cellToReturn
       
    }
    
+   override func tableView(tableView: UITableView, willSelectRowAtIndexPath indexPath: NSIndexPath) -> NSIndexPath? {
+      if !editing {
+         return nil
+      } else {
+         return indexPath
+      }
+   }
    
    override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
       
@@ -261,19 +275,20 @@ class AllJotsController: UITableViewController {
       updateToolbarOnMultipleSelection()
    }
    
+   // TODO: Move closer to toolbar set-up function
    // Possible bugs
    func updateToolbarOnMultipleSelection() {
       
       if editing && tableView.indexPathsForSelectedRows?.count > 1 {
-         toolbarItems![0].title = "Merge (\(tableView.indexPathsForSelectedRows!.count))"
+         toolbarItems![2].title = "Merge (\(tableView.indexPathsForSelectedRows!.count))"
       } else {
-         toolbarItems![0].title = nil
+         toolbarItems![2].title = nil
       }
       
       if editing && tableView.indexPathsForSelectedRows?.count > 0 {
-         toolbarItems![2].title = "Delete"
+         toolbarItems![0].title = "Delete"
       } else {
-         toolbarItems![2].title = nil
+         toolbarItems![0].title = nil
       }
    }
    
@@ -308,9 +323,20 @@ class AllJotsController: UITableViewController {
       }
    }
    
+   // MARK: Set editing
    // Toggles editing mode
    override func setEditing(editing: Bool, animated: Bool) {
       super.setEditing(editing, animated: animated)
+      
+      // Makes sure cells are selectable in editing mode
+      // TODO: Make sure that's not stupid
+      for cell in tableView.visibleCells {
+         if editing {
+            cell.selectionStyle = UITableViewCellSelectionStyle.Blue
+         } else {
+            cell.selectionStyle = UITableViewCellSelectionStyle.None
+         }
+      }
       
       
       toggleSearchButtonOnEditing(editing)
@@ -375,30 +401,65 @@ class AllJotsController: UITableViewController {
       let flexSpace = UIBarButtonItem(barButtonSystemItem: .FlexibleSpace, target: self, action: nil)
       // let composeJot = UIBarButtonItem(barButtonSystemItem: .Compose, target: self, action: "composeJot")
       let jotCount = UIBarButtonItem(title: "\(jots.count) Jots", style: .Plain, target: self, action: nil)
+      let sharingIcon = UIBarButtonItem(barButtonSystemItem: .Action, target: self, action: #selector(shareLastAdded))
       
-      return [flexSpace, jotCount, flexSpace]
+      return [flexSpace, jotCount, flexSpace, sharingIcon]
       
    }
    
    // return toolbar items for editing state
    func editToolbar() -> [UIBarButtonItem] {
       
-      // Create placeholders for "Merge" and "Delete" buttons that will appear on mul  tiple row selection
-      return [UIBarButtonItem(title: nil, style: .Plain, target: self, action: #selector(AllJotsController.mergeAndDelete)),
+      // TODO: disable actions until placeholders are set
+      // Create placeholders for "Merge" and "Delete" buttons that will appear on multiple row selection
+      return [UIBarButtonItem(title: nil, style: .Plain, target: self, action: #selector(deleteSelectedRows)),
          UIBarButtonItem(barButtonSystemItem: .FlexibleSpace, target: self, action: nil),
-         UIBarButtonItem(title: nil, style: .Plain, target: self, action: #selector(AllJotsController.deleteSelectedRows))]
+         UIBarButtonItem(title: nil, style: .Plain, target: self, action: #selector(mergeAndDelete)),
+         UIBarButtonItem(barButtonSystemItem: .FlexibleSpace, target: self, action: nil),
+         UIBarButtonItem(barButtonSystemItem: .Action, target: self, action: #selector(shareSelected))]
+   }
+   
+   func shareLastAdded() {
+      if !jots.isEmpty {
+         let path = NSIndexPath(forRow: 0, inSection: 1)
+         tableView.selectRowAtIndexPath(path, animated: true, scrollPosition: UITableViewScrollPosition.Top)
+         shareSelected()
+      }
+      
+   }
+   
+   func shareSelected() {
+      if let selJots = selectedJotsStrings() {
+         let vc = UIActivityViewController(activityItems: [selJots], applicationActivities: [])
+         
+         // Need this line for an iPad
+         vc.popoverPresentationController?.barButtonItem = toolbarItems![3]
+         
+         presentViewController(vc, animated: true, completion: nil)
+      }
+   }
+   
+   // Makes unique string by concatenating all selected jot's strings
+   func selectedJotsStrings() -> String? {
+      guard let selectedPaths = tableView.indexPathsForSelectedRows else { return nil }
+      var stringsFromSelectedJots = [String]()
+      let sortedPaths = selectedPaths.sort {$0.row < $1.row }
+      for path in sortedPaths {
+         stringsFromSelectedJots.append(jots[path.row].body)
+      }
+      return stringsFromSelectedJots.joinWithSeparator("\n")
    }
    
    func mergeAndDelete() {
       mergeSelected(andDelete: true)
    }
    
-   // Consider adding to UI
+   // Not used for a moment. Consider adding to UI
    func mergeAndLeaveinPlace() {
       mergeSelected(andDelete: false)
    }
    
-   // TODO: Figure out line breaks
+   // TODO: Figure out line breaks. Re-write with .joinWithSeparator
    // Merge selected rows and insert above the uppermost selected
    func mergeSelected(andDelete delete: Bool) {
       if let selectedRows = tableView.indexPathsForSelectedRows {
@@ -423,6 +484,8 @@ class AllJotsController: UITableViewController {
          tableView.reloadData()
       }
    }
+   
+   
    
    // Who knew it would be such a PAIN IN THE ASS because we can't predictably iterate over Swift Array while it updates
    func deleteSelectedRows() {
