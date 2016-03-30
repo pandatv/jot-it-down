@@ -11,7 +11,7 @@ import UIKit
 protocol JotInputCellDelegate: class {
     func jotInputCelldidUpdateTextView(cell: JotInputCell)
     func jotInputCellIsActivated(cell: JotInputCell)
-    func jotAddedFromInputCell(cell: JotInputCell)
+    func jotAddedFromInputCell(cell: JotInputCell, append: Bool)
     
 }
 
@@ -107,6 +107,7 @@ class JotInputCell: UITableViewCell, UITextViewDelegate {
         delegate?.jotInputCellIsActivated(self)
     }
     
+    // TODO: Should probable be different class?
     // Create input accessory view in code
     func makeKeyboardAccessoryView() -> UIToolbar {
         
@@ -117,19 +118,30 @@ class JotInputCell: UITableViewCell, UITextViewDelegate {
         let button = UIButton(type: .System)
         button.setTitle("Show Numpad", forState: .Normal)
         button.sizeToFit()
-        button.addTarget(self, action: #selector(JotInputCell.toggleNumpad(_:)), forControlEvents: .TouchUpInside)
+        button.addTarget(self, action: #selector(toggleNumpad), forControlEvents: .TouchUpInside)
         
         // Test functionality, evaluate UI experience 
-        let doneButton = UIBarButtonItem(title: "Add", style: .Done, target: self, action: #selector(JotInputCell.addJot))
+        
+        let addLabel = UILabel(frame: CGRectZero)
+        addLabel.text = "Add: "
+        addLabel.sizeToFit()
+        
+        let addButtonItem = UIBarButtonItem(customView: addLabel)
+        let doneButtonTop = UIBarButtonItem(title: "Top", style: .Done, target: self, action: #selector(addJotToTop))
+        let doneButtonBottom = UIBarButtonItem(title: "Bottom", style: .Done, target: self, action: #selector(addJotToBottom))
         let flex = UIBarButtonItem(barButtonSystemItem: .FlexibleSpace, target: self, action: nil)
         
-        accView.items = [UIBarButtonItem(customView: button), flex, doneButton]
+        accView.items = [UIBarButtonItem(customView: button), flex, addButtonItem, doneButtonTop, doneButtonBottom]
     
         return accView
     }
     
-    func addJot() {
-        delegate?.jotAddedFromInputCell(self)
+    func addJotToTop() {
+        delegate?.jotAddedFromInputCell(self, append: false)
+    }
+    
+    func addJotToBottom() {
+        delegate?.jotAddedFromInputCell(self, append: true)
     }
     
     // Toggle keyboard type. Note the use of "sender"

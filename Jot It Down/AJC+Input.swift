@@ -9,16 +9,8 @@
 import UIKit
 
 
-// MARK: INPUT CELL CONTROLS
+// INPUT CELL CONTROLS
 extension AllJotsController:  NewJotControllerDelegate, JotInputCellDelegate {
-    // MARK: NewJotController delegate methods
-    
-    func newJotController(contoller: NewJotController, didFinishAddingJot jot: Jot) {
-        jots.insert(jot, atIndex: 0)
-        // refresh table
-        tableView.reloadData()
-    }
-    
     // MARK: JotInputCell delegate methods
     
     func jotInputCelldidUpdateTextView(cell: JotInputCell) {
@@ -46,7 +38,7 @@ extension AllJotsController:  NewJotControllerDelegate, JotInputCellDelegate {
     //NB: model update is handled from AJC, not JIC
     
     
-    func jotAddedFromInputCell(cell: JotInputCell) {
+    func jotAddedFromInputCell(cell: JotInputCell, append: Bool) {
         
         //TODO: Check for whitespace only, not absence of alphanumeric. Not good for Emojis
         // Check if there is anything except whitespace
@@ -59,10 +51,10 @@ extension AllJotsController:  NewJotControllerDelegate, JotInputCellDelegate {
         
         // See if today's section exist, if yes — reload it, if no — refresh whole table
         if SectionBuilder.checkIfThereIsToday(jots) {
-            addJotToModel(cell)
+            addJotToModel(cell, append: append)
             tableView.reloadSections(NSIndexSet(index: 1), withRowAnimation: .Automatic)
         } else {
-            addJotToModel(cell)
+            addJotToModel(cell, append: append)
             tableView.reloadData()
         }
         
@@ -75,7 +67,7 @@ extension AllJotsController:  NewJotControllerDelegate, JotInputCellDelegate {
         
     }
     
-    func addJotToModel(cell: JotInputCell) {
+    func addJotToModel(cell: JotInputCell, append: Bool) {
         let jot = Jot(string: cell.textView.text, title: nil)
         jot.tagColor = cell.colorSelector
         
@@ -84,8 +76,12 @@ extension AllJotsController:  NewJotControllerDelegate, JotInputCellDelegate {
             cell.tickboxSwitch.setOn(false, animated: true)
         }
         
-        jots.insert(jot, atIndex: 0)
-        
+        if append {
+            jots.append(jot)
+        } else {
+            jots.insert(jot, atIndex: 0)
+        }
+
     }
     
     func dismissKeyboard(sender: AnyObject) {
@@ -107,5 +103,13 @@ extension AllJotsController:  NewJotControllerDelegate, JotInputCellDelegate {
             tableView.endUpdates()
         }
         
+    }
+    
+    // MARK: NewJotController delegate methods
+    
+    func newJotController(contoller: NewJotController, didFinishAddingJot jot: Jot) {
+        jots.insert(jot, atIndex: 0)
+        // refresh table
+        tableView.reloadData()
     }
 }

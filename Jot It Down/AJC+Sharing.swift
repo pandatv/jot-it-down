@@ -8,6 +8,7 @@
 
 import UIKit
 
+// SHARING 
 extension AllJotsController {
     
     func presentSharingOptions() {
