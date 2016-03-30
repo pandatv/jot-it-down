@@ -122,16 +122,10 @@ class JotInputCell: UITableViewCell, UITextViewDelegate {
         
         // Test functionality, evaluate UI experience 
         
-        let addLabel = UILabel(frame: CGRectZero)
-        addLabel.text = "Add: "
-        addLabel.sizeToFit()
-        
-        let addButtonItem = UIBarButtonItem(customView: addLabel)
-        let doneButtonTop = UIBarButtonItem(title: "Top", style: .Done, target: self, action: #selector(addJotToTop))
-        let doneButtonBottom = UIBarButtonItem(title: "Bottom", style: .Done, target: self, action: #selector(addJotToBottom))
+        let doneButton = UIBarButtonItem(title: "Add", style: .Done, target: self, action: #selector(addJotToTop))
         let flex = UIBarButtonItem(barButtonSystemItem: .FlexibleSpace, target: self, action: nil)
         
-        accView.items = [UIBarButtonItem(customView: button), flex, addButtonItem, doneButtonTop, doneButtonBottom]
+        accView.items = [UIBarButtonItem(customView: button), flex, doneButton]
     
         return accView
     }
