@@ -287,8 +287,10 @@ class AllJotsController: UITableViewController {
       
       if editing && tableView.indexPathsForSelectedRows?.count > 0 {
          toolbarItems![0].title = "Delete"
+         toolbarItems![4].tintColor = nil
       } else {
          toolbarItems![0].title = nil
+         toolbarItems![4].tintColor = UIColor.clearColor()
       }
    }
    
@@ -410,13 +412,17 @@ class AllJotsController: UITableViewController {
    // return toolbar items for editing state
    func editToolbar() -> [UIBarButtonItem] {
       
+      
+      let shareButton = UIBarButtonItem(barButtonSystemItem: .Action, target: self, action: #selector(shareSelectedPaths))
+      shareButton.tintColor = UIColor.clearColor()
+      
       // TODO: disable actions until placeholders are set
       // Create placeholders for "Merge" and "Delete" buttons that will appear on multiple row selection
       return [UIBarButtonItem(title: nil, style: .Plain, target: self, action: #selector(deleteSelectedRows)),
          UIBarButtonItem(barButtonSystemItem: .FlexibleSpace, target: self, action: nil),
          UIBarButtonItem(title: nil, style: .Plain, target: self, action: #selector(mergeAndDelete)),
          UIBarButtonItem(barButtonSystemItem: .FlexibleSpace, target: self, action: nil),
-         UIBarButtonItem(barButtonSystemItem: .Action, target: self, action: #selector(shareSelectedPaths))]
+         shareButton]
    }
    
    func mergeAndDelete() {
