@@ -8,6 +8,9 @@
 
 import UIKit
 
+protocol JotTableViewCellDelegate: class {
+    func JotTableViewCellDelegateDidReportPath(sender: JotTableViewCell) -> NSIndexPath
+}
 
 class JotTableViewCell: UITableViewCell {
     
@@ -23,6 +26,8 @@ class JotTableViewCell: UITableViewCell {
         jot!.done = !jot!.done
         updateUI()
     }
+    
+    weak var delegate: JotTableViewCellDelegate?
     
     var jot: Jot? {
         didSet {
@@ -91,7 +96,7 @@ class JotTableViewCell: UITableViewCell {
     }
     
     func testSwipe() {
-        print("Swipe detected")
+        delegate?.JotTableViewCellDelegateDidReportPath(self)
     }
     
     

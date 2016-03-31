@@ -101,8 +101,8 @@
 			isa = PBXGroup;
 			children = (
 				B990A66A1C6799EA00ECEBDD /* JotInputCell.swift */,
-				B918F1831C627550008712C1 /* JotTableViewCell.swift */,
 				B9CCB6E61C6796F1009B1648 /* JotInputCell.xib */,
+				B918F1831C627550008712C1 /* JotTableViewCell.swift */,
 			);
 			name = View;
 			sourceTree = "<group>";

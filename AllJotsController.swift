@@ -10,8 +10,17 @@ import UIKit
 
 //TODO: Refactor navbar drawing code!
 
-class AllJotsController: UITableViewController {
+class AllJotsController: UITableViewController, JotTableViewCellDelegate {
    
+   func JotTableViewCellDelegateDidReportPath(sender: JotTableViewCell) -> NSIndexPath {
+      let path = tableView.indexPathForCell(sender)!
+      
+      tableView.deleteRowsAtIndexPaths([path], withRowAnimation: .Automatic)
+      print("Section: \(path.section), Row: \(path.row)")
+      
+      
+      return path
+   }
    
    var jots = [Jot]() {
       didSet {
@@ -159,19 +168,6 @@ class AllJotsController: UITableViewController {
 
    }
    
-   // TODO:
-   /*
-   // SECTION INDEX
-   override func sectionIndexTitlesForTableView(tableView: UITableView) -> [String]? {
-      if !editing {
-         return SectionBuilder.namesForSections(jots).short
-      } else {
-         return nil
-      }
-      
-   }
-   */
-   
    //DISPATCH CELLS
    
    override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
@@ -223,6 +219,8 @@ class AllJotsController: UITableViewController {
          case .Checkmark:
             cell.tickbox.hidden = false
          }
+         
+         cell.delegate = self
          
          cellToReturn = cell
          
@@ -303,7 +301,7 @@ class AllJotsController: UITableViewController {
       }
    }
    
-   // Disable swipe actions
+   // Disable swipe to delete
    override func tableView(tableView: UITableView, editingStyleForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCellEditingStyle {
       if editing {
          return UITableViewCellEditingStyle.Delete
@@ -460,7 +458,7 @@ class AllJotsController: UITableViewController {
    }
    
    
-   
+   // TODO: Re-write without NSStuff
    // Who knew it would be such a PAIN IN THE ASS because we can't predictably iterate over Swift Array while it updates
    func deleteSelectedRows() {
       
