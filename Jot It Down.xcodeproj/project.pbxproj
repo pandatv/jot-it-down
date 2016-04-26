@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		8E4D67F91C8069C400536959 /* Clippings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E4D67F81C8069C400536959 /* Clippings.swift */; };
 		B918F16C1C5F6040008712C1 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B918F16B1C5F6040008712C1 /* AppDelegate.swift */; };
 		B918F1711C5F6040008712C1 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B918F16F1C5F6040008712C1 /* Main.storyboard */; };
 		B918F1731C5F6040008712C1 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B918F1721C5F6040008712C1 /* Assets.xcassets */; };
@@ -25,7 +24,6 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		8E4D67F81C8069C400536959 /* Clippings.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Clippings.swift; sourceTree = "<group>"; };
 		B918F1681C5F6040008712C1 /* Jot It Down.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Jot It Down.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B918F16B1C5F6040008712C1 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		B918F1701C5F6040008712C1 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -82,7 +80,6 @@
 				B918F1721C5F6040008712C1 /* Assets.xcassets */,
 				B918F1741C5F6040008712C1 /* LaunchScreen.storyboard */,
 				B918F1771C5F6040008712C1 /* Info.plist */,
-				8E4D67F81C8069C400536959 /* Clippings.swift */,
 				B918F1691C5F6040008712C1 /* Products */,
 			);
 			path = "Jot It Down";
@@ -196,7 +193,6 @@
 				B918F16C1C5F6040008712C1 /* AppDelegate.swift in Sources */,
 				B918F1841C627550008712C1 /* JotTableViewCell.swift in Sources */,
 				B980FCFB1CABE652008250CF /* AJC+Input.swift in Sources */,
-				8E4D67F91C8069C400536959 /* Clippings.swift in Sources */,
 				B918F1821C5F6BF2008712C1 /* NewJotController.swift in Sources */,
 				B96CEBE91C9C1A0500801513 /* AJC+Search.swift in Sources */,
 				B918F17E1C5F6AD9008712C1 /* AllJotsController.swift in Sources */,
