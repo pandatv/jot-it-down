@@ -8,7 +8,7 @@
 
 import UIKit
 
-//TODO: Refactor navbar drawing code!
+//TODO: Refactor navbar drawing code!!
 
 class AllJotsController: UITableViewController, JotTableViewCellDelegate {
    
