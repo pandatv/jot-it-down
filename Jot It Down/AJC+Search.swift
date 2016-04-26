@@ -16,7 +16,8 @@ extension AllJotsController: UISearchResultsUpdating, UISearchBarDelegate {
     }
     
     func filterModelForSearchText(searchText: String) {
-        filteredJots = jots.filter { jot in
+        let flattenedJots = sectionedJots.flatMap { $0 }
+        filteredJots = flattenedJots.filter { jot in
             return jot.body.lowercaseString.containsString(searchText.lowercaseString)
         }
         

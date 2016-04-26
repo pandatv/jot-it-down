@@ -121,7 +121,7 @@ class SectionBuilder {
     
     // TODO: Re-write with flatMap()! 
     // Uses tuples to generate relevant section names
-    private class func arraysForSections(jots: [Jot]) -> [(name: String, interval: [Jot])] {
+    class func arraysForSections(jots: [Jot]) -> [(name: String, interval: [Jot])] {
         
         var todayJots: [Jot]?
         var thisWeekJots: [Jot]?
@@ -133,7 +133,6 @@ class SectionBuilder {
         
         var names = [String]()
         
-        // That's the way!
         for jot in jots {
             
             if calendar.compareDate(jot.createdAt, toDate: now, toUnitGranularity: .Day) == NSComparisonResult.OrderedSame {

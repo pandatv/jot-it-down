@@ -12,19 +12,34 @@ import UIKit
 
 class AllJotsController: UITableViewController, JotTableViewCellDelegate {
    
+   // TODO: Move to a proper place in code. Should we return something from this func?
    func JotTableViewCellDelegateDidReportPath(sender: JotTableViewCell) -> NSIndexPath {
       let path = tableView.indexPathForCell(sender)!
       
-      tableView.deleteRowsAtIndexPaths([path], withRowAnimation: .Automatic)
-      print("Section: \(path.section), Row: \(path.row)")
+      guard !editing else {
+         return path
+      }
       
+      tableView.beginUpdates()
+      sectionedJots[path.section - 1].removeAtIndex(path.row)
+      tableView.deleteRowsAtIndexPaths([path], withRowAnimation: .Automatic)
+      tableView.endUpdates()
+      
+      
+      if sectionedJots[path.section - 1].isEmpty {
+         jots = sectionedJots.flatMap { $0 }
+         tableView.reloadData()
+         return path
+      }
+
+      jots = sectionedJots.flatMap { $0 }
       
       return path
    }
    
    var jots = [Jot]() {
       didSet {
-         // Re-draw toolbar to update count, make sure we're not in editing mode
+         // Redraw toolbar to update count, make sure we're not in editing mode
          if !editing {
             self.toolbarItems = normalToolbar()
          }
@@ -36,8 +51,18 @@ class AllJotsController: UITableViewController, JotTableViewCellDelegate {
          } else {
             self.navigationItem.rightBarButtonItem = self.editButtonItem()
          }
+         
+         // Magic
+         var sections = [[Jot]]()
+         
+         for tuple in SectionBuilder.arraysForSections(jots) {
+            sections.append(tuple.interval)
+         }
+         sectionedJots = sections
       }
    }
+   
+   var sectionedJots = [[Jot]]()
    
    var filteredJots = [Jot]()
    
@@ -127,7 +152,7 @@ class AllJotsController: UITableViewController, JotTableViewCellDelegate {
       
       
       if !editing {
-         return SectionBuilder.numberOfSections(jots, accountForInputRow: true)
+         return sectionedJots.count + 1 // SectionBuilder.numberOfSections(jots, accountForInputRow: true)
       } else {
          return 2
       }
@@ -147,7 +172,7 @@ class AllJotsController: UITableViewController, JotTableViewCellDelegate {
       }
       
       if !editing {
-         return SectionBuilder.numberOfRowsInSection(jots, section: section, accountForInputRow: true)
+         return sectionedJots[section - 1].count // SectionBuilder.numberOfRowsInSection(jots, section: section, accountForInputRow: true)
       } else {
          return jots.count
       }
@@ -181,6 +206,7 @@ class AllJotsController: UITableViewController, JotTableViewCellDelegate {
          let cell = tableView.dequeueReusableCellWithIdentifier("standard") as! JotTableViewCell
          jot = filteredJots[indexPath.row]
          cell.jot = jot
+         cell.selectionStyle = UITableViewCellSelectionStyle.Blue
          return cell
       }
       
@@ -202,9 +228,10 @@ class AllJotsController: UITableViewController, JotTableViewCellDelegate {
          var jot: Jot
          
          if !editing {
-            jot = SectionBuilder.jotForRowAtIndexPath(jots, indexPath: indexPath, accountForInputRow: true)
+            jot = sectionedJots[indexPath.section - 1][indexPath.row] // SectionBuilder.jotForRowAtIndexPath(jots, indexPath: indexPath, accountForInputRow: true)
          } else {
-            jot = jots[indexPath.row]
+            let flattenedJots = sectionedJots.flatMap { $0 }
+            jot = flattenedJots[indexPath.row]
          }
          
          
@@ -239,7 +266,7 @@ class AllJotsController: UITableViewController, JotTableViewCellDelegate {
    }
    
    override func tableView(tableView: UITableView, willSelectRowAtIndexPath indexPath: NSIndexPath) -> NSIndexPath? {
-      if !editing {
+      if !editing && !searchController.active {
          return nil
       } else {
          return indexPath
@@ -350,7 +377,8 @@ class AllJotsController: UITableViewController, JotTableViewCellDelegate {
          { () -> Void in
             self.tableView.reloadData()
          },
-         completion: nil);
+         completion: nil)
+      
    }
    
    // TODO: Bug: Button re-appears on select row in editing mode
@@ -510,7 +538,7 @@ class AllJotsController: UITableViewController, JotTableViewCellDelegate {
       let calendar = NSCalendar.currentCalendar()
       let todayComps = calendar.components([.Day], fromDate: NSDate())
       
-      for month in 1...3 {
+      for month in 1...4 {
          for day in 1...31 {
             let components = NSDateComponents()
             components.day = day

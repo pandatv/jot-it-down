@@ -11,7 +11,7 @@ import UIKit
 protocol JotInputCellDelegate: class {
     func jotInputCelldidUpdateTextView(cell: JotInputCell)
     func jotInputCellIsActivated(cell: JotInputCell)
-    func jotAddedFromInputCell(cell: JotInputCell, append: Bool)
+    func jotAddedFromInputCell(cell: JotInputCell)
     
 }
 
@@ -131,12 +131,10 @@ class JotInputCell: UITableViewCell, UITextViewDelegate {
     }
     
     func addJotToTop() {
-        delegate?.jotAddedFromInputCell(self, append: false)
+        delegate?.jotAddedFromInputCell(self)
     }
     
-    func addJotToBottom() {
-        delegate?.jotAddedFromInputCell(self, append: true)
-    }
+
     
     // Toggle keyboard type. Note the use of "sender"
     func toggleNumpad(sender: UIButton) {
