@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		8ECF634C1CD9D2C200E52F78 /* AJC+JotTableViewCellDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ECF634B1CD9D2C200E52F78 /* AJC+JotTableViewCellDelegate.swift */; };
 		B918F16C1C5F6040008712C1 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B918F16B1C5F6040008712C1 /* AppDelegate.swift */; };
 		B918F1711C5F6040008712C1 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B918F16F1C5F6040008712C1 /* Main.storyboard */; };
 		B918F1731C5F6040008712C1 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B918F1721C5F6040008712C1 /* Assets.xcassets */; };
@@ -24,6 +25,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		8ECF634B1CD9D2C200E52F78 /* AJC+JotTableViewCellDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "AJC+JotTableViewCellDelegate.swift"; sourceTree = "<group>"; };
 		B918F1681C5F6040008712C1 /* Jot It Down.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Jot It Down.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B918F16B1C5F6040008712C1 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		B918F1701C5F6040008712C1 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -108,6 +110,7 @@
 			isa = PBXGroup;
 			children = (
 				B918F17D1C5F6AD9008712C1 /* AllJotsController.swift */,
+				8ECF634B1CD9D2C200E52F78 /* AJC+JotTableViewCellDelegate.swift */,
 				B96CEBE81C9C1A0500801513 /* AJC+Search.swift */,
 				B980FCF81CABE600008250CF /* AJC+Sharing.swift */,
 				B980FCFA1CABE652008250CF /* AJC+Input.swift */,
@@ -190,6 +193,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B990A66B1C6799EA00ECEBDD /* JotInputCell.swift in Sources */,
+				8ECF634C1CD9D2C200E52F78 /* AJC+JotTableViewCellDelegate.swift in Sources */,
 				B918F16C1C5F6040008712C1 /* AppDelegate.swift in Sources */,
 				B918F1841C627550008712C1 /* JotTableViewCell.swift in Sources */,
 				B980FCFB1CABE652008250CF /* AJC+Input.swift in Sources */,

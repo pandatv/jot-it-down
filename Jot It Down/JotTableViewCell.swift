@@ -9,19 +9,16 @@
 import UIKit
 
 protocol JotTableViewCellDelegate: class {
-    func JotTableViewCellDelegateDidReportPath(sender: JotTableViewCell) -> NSIndexPath
+    func JotTableViewCellDidReportPath(sender: JotTableViewCell) -> NSIndexPath
 }
 
 class JotTableViewCell: UITableViewCell {
     
     @IBOutlet weak var titleLabel: UILabel!
-
     @IBOutlet weak var createdAtLabel: UILabel!
-    
     @IBOutlet weak var bodyTextView: UITextView!
-
     @IBOutlet weak var tickbox: UIButton!
-
+    
     @IBAction func toggleTickbox(sender: AnyObject) {
         jot!.done = !jot!.done
         updateUI()
@@ -96,7 +93,7 @@ class JotTableViewCell: UITableViewCell {
     }
     
     func testSwipe() {
-        delegate?.JotTableViewCellDelegateDidReportPath(self)
+        delegate?.JotTableViewCellDidReportPath(self)
     }
     
     

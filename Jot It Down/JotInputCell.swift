@@ -21,9 +21,7 @@ class JotInputCell: UITableViewCell, UITextViewDelegate {
 
 
     @IBOutlet weak var textView: UITextView!
-    
     @IBOutlet weak var colorTagButton: UIButton!
-    
     @IBOutlet weak var tickboxSwitch: UISwitch!
     
     
@@ -31,7 +29,6 @@ class JotInputCell: UITableViewCell, UITextViewDelegate {
     
     let placeholder = "Jot it down!"
     
-
     var colorSelector: Jot.TagColor = .None
     
     override func awakeFromNib() {

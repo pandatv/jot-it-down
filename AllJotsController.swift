@@ -10,33 +10,9 @@ import UIKit
 
 //TODO: Refactor navbar drawing code!!
 
-class AllJotsController: UITableViewController, JotTableViewCellDelegate {
+class AllJotsController: UITableViewController {
    
-   // TODO: Move to a proper place in code. Should we return something from this func?
-   func JotTableViewCellDelegateDidReportPath(sender: JotTableViewCell) -> NSIndexPath {
-      let path = tableView.indexPathForCell(sender)!
-      
-      guard !editing else {
-         return path
-      }
-      
-      tableView.beginUpdates()
-      sectionedJots[path.section - 1].removeAtIndex(path.row)
-      tableView.deleteRowsAtIndexPaths([path], withRowAnimation: .Automatic)
-      tableView.endUpdates()
-      
-      
-      if sectionedJots[path.section - 1].isEmpty {
-         jots = sectionedJots.flatMap { $0 }
-         tableView.reloadData()
-         return path
-      }
 
-      jots = sectionedJots.flatMap { $0 }
-      
-      return path
-   }
-   
    var jots = [Jot]() {
       didSet {
          // Redraw toolbar to update count, make sure we're not in editing mode
